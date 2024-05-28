@@ -24,8 +24,9 @@ export function createApp() {
             resave: false,
             saveUninitialized: false,
             store: MongoStore.create({
-                mongoUrl: "",
+                mongoUrl: "INSERT URL HERE",
             }),
+            cookie: {secure: true}
         })
     );
     

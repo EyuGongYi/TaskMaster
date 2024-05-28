@@ -19,5 +19,10 @@ export async function createUser(request: Request<{},{}, CreateUserDto, CreateUs
 
 export async function loginUser(request: Request<{},{}, CreateUserDto, CreateUserQueryParams>, response: Response) {
     console.log("logged in");
-    response.send(201);
+    response.sendStatus(201);
+}
+
+export async function isLoggedIn(request: Request, response: Response) {
+    if (request.user) response.sendStatus(200);
+    else response.sendStatus(401);
 }

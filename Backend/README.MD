@@ -3,7 +3,16 @@ To NOTE:
 
 Modules used for backend:
  - Production Packages:
-     - express.js (Provides an Backend application )
+     - "express.js" (Provides an Backend application )
+     - "bcryptjs" (hashing of password)
+     - "connect-mongo"
+     - "dotenv"
+     - "express"
+     - "express-session"
+     - "mongodb"
+     - "mongoose"
+     - "passport"
+     - "passport-local"
 
  - Development Packages:
      - Typescript and its dependency for other packages
@@ -39,10 +48,7 @@ Todo:
 Figure out how jest works
 Figure out how SuperTest works
 Figure out Passport.js
-Change deserialiser to only send around session id?
-get ->  get info from server
-post ->  provide info to server
 Wanted to figure out .env  for storing dbURL but a bit laze rn.
-Figure out a proper way of getting stuff out of request.user.
+
 
     

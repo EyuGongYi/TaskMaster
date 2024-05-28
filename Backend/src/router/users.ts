@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getUserByID, getUsers } from "../handler/users";
+import { getUserByID, getUserUsername } from "../handler/users";
 
 const userRouter = Router();
 
@@ -8,8 +8,8 @@ userRouter.use((req, res, next) => {
     else res.send(401);
 });
 
-// /api/users
-userRouter.get("/", getUsers);
+// /api/users/username
+userRouter.get("/username", getUserUsername);
 
 // /api/users/123
 userRouter.get("/:id", getUserByID);

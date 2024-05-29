@@ -4,6 +4,10 @@ const UserSchema = new mongoose.Schema({
     username: {
         type: mongoose.SchemaTypes.String,
         unique: true,
+        default: function() {
+            const _t = this as any; // tslint:disable-line
+            return _t.email.slice(0,2);
+        }
     },
     email: {
         type: mongoose.SchemaTypes.String,

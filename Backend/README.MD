@@ -3,16 +3,15 @@ To NOTE:
 
 Modules used for backend:
  - Production Packages:
-     - "express.js" (Provides an Backend application )
+     - "express" (Provides an Backend application )
      - "bcryptjs" (hashing of password)
-     - "connect-mongo"
-     - "dotenv"
-     - "express"
-     - "express-session"
-     - "mongodb"
-     - "mongoose"
-     - "passport"
-     - "passport-local"
+     - "connect-mongo" (mongoDB Session store)
+     - "dotenv" (storing env file and env variable)
+     - "express-session" (Enable Sessions in express application)
+     - "mongodb" (database)
+     - "mongoose" (database)
+     - "passport" (auth)
+     - "passport-local" (auth strategy)
 
  - Development Packages:
      - Typescript and its dependency for other packages
@@ -48,7 +47,16 @@ Todo:
 Figure out how jest works
 Figure out how SuperTest works
 Figure out Passport.js
-Wanted to figure out .env  for storing dbURL but a bit laze rn.
+Probably needa change :username to use the query feature???
+
+API EndPoint:
+ - /api/users
+     - /username (Returns user's username)
+     - /:username (return an array of [username, email] with usernames corresponding to the username searched)
+ - /api/auth
+     - /register (Registers a new account for user)
+     - /login (Attempts to log the user in. returns Status 201 if logged in. Returns status 500 if Fails to Log in )
+     - /isLoggedIn (Checks if user is logged in. Returns status 200 if logged in. status 401 if not logged in) 
 
 
     

@@ -11,6 +11,7 @@ authRouter.post("/register", createUser);
 // /api/auth/login
 authRouter.post("/login", passport.authenticate("local"), loginUser);
 
+// /api/auth/login
 authRouter.get("/isLoggedIn", isLoggedIn);
 
 export default authRouter;

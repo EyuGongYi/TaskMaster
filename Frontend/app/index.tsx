@@ -1,15 +1,18 @@
-import { Text, View } from "react-native";
+import 'react-native-gesture-handler';
+import * as React from 'react';
+import { createStackNavigator } from '@react-navigation/stack';
+import LoginScreen from './screens/login';
+import HomeScreen from './screens/home';
+import RegisterScreen from './screens/register';
 
-export default function Index() {
+const Stack = createStackNavigator();
+
+export default function App() {
   return (
-    <View
-      style={{
-        flex: 1,
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Text>Edit app/index.tsx to edit this screen.</Text>
-    </View>
+    <Stack.Navigator initialRouteName="Login">
+      <Stack.Screen name="Login" component={LoginScreen} />
+      <Stack.Screen name="Home" component={HomeScreen} />
+      <Stack.Screen name="Register" component={RegisterScreen} />
+    </Stack.Navigator>
   );
 }

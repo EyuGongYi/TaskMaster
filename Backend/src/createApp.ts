@@ -6,8 +6,7 @@ import passport from "passport";
 import "./strategies/local";
 import session from "express-session";
 import MongoStore from "connect-mongo";
-
-
+import "dotenv/config";
 
 // Creates a Express Application
 export function createApp() {
@@ -20,13 +19,12 @@ export function createApp() {
 
     app.use(session(
         {
-            secret: "yRUGay",
+            secret: process.env.SESSION_SECRET ||"ADD ur secret into .env",
             resave: false,
             saveUninitialized: false,
             store: MongoStore.create({
-                mongoUrl: "INSERT URL HERE",
+                mongoUrl: process.env.DB_URL ||"ADD ur DBUrl into .env",
             }),
-            cookie: {secure: true}
         })
     );
     

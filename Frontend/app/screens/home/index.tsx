@@ -1,8 +1,18 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Text, View, StyleSheet } from "react-native";
 import { Link } from "expo-router";
+import getUsername from "@/scripts/getUsername";
 
-export default function Index() {
+export default  function Index() {
+  const [username, setUsername] = useState('');
+  useEffect(() => {
+    const fetchUsername = async () => {
+      const name = await getUsername();
+      setUsername(name);
+    }
+    fetchUsername();
+  },[]);
+  
   const currentDate = new Date();
   const formattedDate = currentDate.toLocaleDateString(undefined, {
     weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
@@ -21,7 +31,7 @@ export default function Index() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Welcome, User!</Text>
+      <Text style={styles.text}>Welcome, {username}!</Text>
       <Text style={styles.dateText}>{formattedDate}</Text>
       <View style={styles.section}>
         <Text style={styles.sectionHeader}>Schedule for Today:</Text>

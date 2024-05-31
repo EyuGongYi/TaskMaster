@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { View, TextInput, Button, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import { useNavigation, NavigationProp, ParamListBase } from '@react-navigation/native';
+import login from '@/scripts/login';
 
 const LoginScreen = () => {
   const [username, setUsername] = useState('');
@@ -8,8 +9,8 @@ const LoginScreen = () => {
   const [error, setError] = useState('');
   const navigation = useNavigation<NavigationProp<ParamListBase>>();
 
-  const handleLogin = () => {
-    if (username === 'admin' && password === 'pw') {
+  const handleLogin = async() => {
+    if (await login(username, password)) {
       navigation.navigate('Home');
     } else {
       setError('Incorrect username or password');

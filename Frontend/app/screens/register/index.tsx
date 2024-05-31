@@ -1,12 +1,20 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, Button, StyleSheet } from 'react-native';
+import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity } from 'react-native';
+import { useNavigation, NavigationProp, ParamListBase } from '@react-navigation/native';
+import register from '@/scripts/register';
 
 const RegisterScreen = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [error, setError] = useState('');
+  const navigation = useNavigation<NavigationProp<ParamListBase>>();
 
-  const handleSignUp = () => {
-    console.log('New Username:', username, 'New Password:', password);
+  const handleSignUp = async() => {
+    if (await register(username, password)) {
+      navigation.navigate('Home');
+    } else {
+      setError('Failed to create account');
+    }
   };
 
   return (
@@ -25,6 +33,7 @@ const RegisterScreen = () => {
         value={password}
         secureTextEntry
       />
+      {error ? <Text style={styles.errorText}>{error}</Text> : null}
       <Button title="Sign Up" onPress={handleSignUp} />
     </View>
   );
@@ -43,6 +52,10 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: 20,
     paddingHorizontal: 10,
+  },
+  errorText: {
+    color: 'red',
+    marginBottom: 12,
   },
 });
 

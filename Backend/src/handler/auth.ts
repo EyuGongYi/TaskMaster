@@ -12,7 +12,7 @@ export async function createUser(request: Request<{},{}, CreateUserDto, CreateUs
     } else {
         const password = hashPassword(request.body.password);
         await User.create({email, password});
-        response.status(201);
+        response.sendStatus(201);
     }
 
 };

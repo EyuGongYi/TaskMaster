@@ -1,8 +1,10 @@
 import axios from "axios";
 
+
+
 export default async function login(email: string, password: string) {
     try {
-        const res = await axios.post(process.env.PORTURL + "/api/auth/login", {
+        const res = await axios.post( process.env.EXPO_PUBLIC_PORTURL+ "/api/auth/login", {
             email: email,
             password: password,
         })

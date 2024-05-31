@@ -7,11 +7,13 @@ import "./strategies/local";
 import session from "express-session";
 import MongoStore from "connect-mongo";
 import "dotenv/config";
+import cors from "cors";
 
 // Creates a Express Application
 export function createApp() {
     // Init Application
     const app = express();
+    app.use(cors());
     
     //Middlewares
     // allow receiving of json (Middleware)

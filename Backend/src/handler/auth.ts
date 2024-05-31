@@ -23,6 +23,11 @@ export async function loginUser(request: Request<{},{}, CreateUserDto, CreateUse
 }
 
 export async function isLoggedIn(request: Request, response: Response) {
-    if (request.user) response.sendStatus(200);
-    else response.sendStatus(401);
+    if (request.user) {
+        console.log("User is logged in:", request.user);
+        response.status(200).send({ isLoggedIn: true, user: request.user});
+    } else {
+        console.log("User is not logged in");
+        response.status(401).send({ isLoggedIn: false });
+    }
 }

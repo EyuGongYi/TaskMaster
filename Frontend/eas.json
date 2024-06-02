@@ -8,12 +8,16 @@
       "distribution": "internal",
       "channel": "development",
       "env": {
-        "EXPO_PUBLIC_API_URL": "http://192.168.1.69:3000"
+        "EXPO_PUBLIC_API_URL": "http://192.168.1.69:3000",
+        "EXPO_PUBLIC_PORTURL": "https://taskmaster-xrvw.onrender.com"
       }
     },
     "preview": {
       "distribution": "internal",
-      "channel": "preview"
+      "channel": "preview",
+      "env": {
+        "EXPO_PUBLIC_PORTURL": "https://taskmaster-xrvw.onrender.com"
+      }
     },
     "production": {
       "channel": "production",

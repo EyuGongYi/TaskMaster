@@ -1,17 +1,16 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, Button, StyleSheet, TouchableOpacity } from 'react-native';
-import { useNavigation, NavigationProp, ParamListBase } from '@react-navigation/native';
-import register from '@/scripts/register';
+import {register} from '@/scripts/auth';
+import { Redirect } from 'expo-router';
 
 const RegisterScreen = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const navigation = useNavigation<NavigationProp<ParamListBase>>();
 
   const handleSignUp = async() => {
     if (await register(username, password)) {
-      navigation.navigate('Home');
+      return <Redirect href="screens/home"/>
     } else {
       setError('Failed to create account');
     }

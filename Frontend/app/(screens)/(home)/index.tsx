@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Text, View, StyleSheet } from "react-native";
-import { Link } from "expo-router";
 import getUsername from "@/scripts/getUsername";
 
 export default  function Index() {
@@ -56,20 +55,6 @@ export default  function Index() {
             )}
           </View>
         ))}
-      </View>
-      <View style={styles.tabBar}>
-        <Link href="screens/home" style={styles.tabItem}>
-          <Text>Home</Text>
-        </Link>
-        <Link href="screens/calendar" style={styles.tabItem}>
-          <Text>Calendar</Text>
-        </Link>
-        <Link href="screens/recommendation" style={styles.tabItem}>
-          <Text>Recommended Workflow</Text>
-        </Link>
-        <Link href="screens/sync" style={styles.tabItem}>
-          <Text>Sync with Friend</Text>
-        </Link>
       </View>
     </View>
   );

@@ -1,24 +1,23 @@
 import React, { useState } from 'react';
 import { View, TextInput, Button, StyleSheet, Text, TouchableOpacity } from 'react-native';
-import { useNavigation, NavigationProp, ParamListBase } from '@react-navigation/native';
-import login from '@/scripts/login';
+import {login} from '@/scripts/auth';
+import { router } from 'expo-router';
 
 const LoginScreen = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const navigation = useNavigation<NavigationProp<ParamListBase>>();
 
   const handleLogin = async() => {
     if (await login(username, password)) {
-      navigation.navigate('Home');
+      router.navigate("../(screens)")
     } else {
       setError('Incorrect username or password');
     }
   };
 
   const handleRegister = () => {
-    navigation.navigate('Register');
+    router.navigate('register');
   };
 
   return (

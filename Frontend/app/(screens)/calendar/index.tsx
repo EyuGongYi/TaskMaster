@@ -1,6 +1,5 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
-import { Link } from 'expo-router';
 import { Calendar } from 'react-native-calendars';
 
 interface Event {
@@ -70,20 +69,6 @@ export default function Index() {
           </View>
         )}
       />
-      <View style={styles.tabBar}>
-        <Link href="screens/home" style={styles.tabItem}>
-          <Text>Home</Text>
-        </Link>
-        <Link href="screens/calendar" style={styles.tabItem}>
-          <Text>Calendar</Text>
-        </Link>
-        <Link href="screens/recommendation" style={styles.tabItem}>
-          <Text>Recommended Workflow</Text>
-        </Link>
-        <Link href="screens/sync" style={styles.tabItem}>
-          <Text>Sync with Friend</Text>
-        </Link>
-      </View>
     </View>
   );
 }

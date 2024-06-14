@@ -3,7 +3,7 @@ import { useEffect } from 'react'
 import { isLoggedIn } from '@/scripts/auth'
 import { router } from 'expo-router';
 import Index from './(screens)/(home)';
-import { View } from 'react-native';
+import { Text, View } from 'react-native';
 
 export default function index() {
     useEffect(() => {
@@ -13,5 +13,9 @@ export default function index() {
       }
       loginCheck();
     },[]);
-    
+    return (
+      <View>
+        <Text>Loading</Text>
+      </View>
+    )
   }

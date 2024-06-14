@@ -118,22 +118,5 @@ const styles = StyleSheet.create({
   customText: {
     color: '#fff',
     fontWeight: 'bold',
-  },
-  tabBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    backgroundColor: 'lightgrey',
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-  },
-  tabItem: {
-    flex: 1,
-    alignItems: 'center',
-    padding: 10,
-  },
+  }
 });

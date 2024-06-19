@@ -1,17 +1,31 @@
 import axios from "axios";
+import * as Linking from "expo-linking";
+
+axios.defaults.withCredentials = true
+//export async function login(email: string, password: string) {
+//    try {
+//        const res = await axios.post( process.env.EXPO_PUBLIC_PORTURL+ "/api/auth/login", {
+//            email: email,
+//            password: password,
+//        })
+//        .then(response => response.status);
+//        if (res == 201) return true;
+//        else return false;
+//    } catch (err) {
+//        return false;
+//    }
+//};
 
 export async function login(email: string, password: string) {
-    try {
-        const res = await axios.post( process.env.EXPO_PUBLIC_PORTURL+ "/api/auth/login", {
-            email: email,
-            password: password,
-        })
-        .then(response => response.status);
-        if (res == 201) return true;
-        else return false;
-    } catch (err) {
-        return false;
-    }
+    await Linking.openURL("http://localhost:3000/api/auth/google");
+    //try {
+    //    const res = await axios.get( process.env.EXPO_PUBLIC_PORTURL+ "/api/auth/google")
+    //    .then(response => response.status);
+    //    if (res == 201) return true;
+    //    else return false;
+    //} catch (err) {
+    //    return false;
+    //}
 };
 
 export async function register(email: string, password: string) {

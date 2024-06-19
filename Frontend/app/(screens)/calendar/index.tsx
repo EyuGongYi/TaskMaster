@@ -28,6 +28,7 @@ export default function Index() {
   const renderEvent = (day: { dateString: string }) => {
     const event = events[day.dateString];
     if (event) {
+      
       // Sort events by time
       const sortedEvents = event.sort((a, b) => (a.time || '').localeCompare(b.time || ''));
 

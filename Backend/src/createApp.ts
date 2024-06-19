@@ -3,7 +3,7 @@ import express from "express";
 import userRouter from "./router/users";
 import authRouter from "./router/auth";
 import passport from "passport";
-import "./strategies/local";
+import "./strategies/google";
 import session from "express-session";
 import MongoStore from "connect-mongo";
 import "dotenv/config";
@@ -27,6 +27,10 @@ export function createApp() {
             store: MongoStore.create({
                 mongoUrl: process.env.DB_URL ||"ADD ur DBUrl into .env",
             }),
+            cookie: {
+                sameSite:"none",
+                secure:"auto",
+            }
         })
     );
     

@@ -9,13 +9,19 @@ import CalendarEvent from "@/constants/CalendarEvent";
 // Mock data for AssignmentAlert
 const alerts: AssignmentAlert[] = [
   { type: 'Assignment', message: 'Complete Assignment 1', deadline: '23/5/2024' },
-  { type: 'Announcement', message: 'New course material uploaded' }
+  { type: 'Announcement', message: 'New course material uploaded' },
+  { type: 'Announcement', message: 'New course material uploaded' },
+  { type: 'Announcement', message: 'New course material uploaded' },
+  { type: 'Announcement', message: 'New course material uploaded' },
+
 ];
 
 //Mock data for Calendar Events
 const events: CalendarEvent[] = [
   { type: 'Event', start: '10:00 AM', end: '12:00pm', title: 'Meeting' },
   { type: 'Event', start: '12:00 PM', end: '1:00pm', title: 'Lunch' },
+  { type: 'Event', start: '4:00 PM', end: '5:00pm', title: 'Workshop' },
+  { type: 'Event', start: '4:00 PM', end: '5:00pm', title: 'Workshop' },
   { type: 'Event', start: '4:00 PM', end: '5:00pm', title: 'Workshop' },
 ];
 

@@ -9,7 +9,7 @@ const authRouter = Router();
 // /api/auth/login
 authRouter.get('/google', (req, res, next) => {
     const { redirect_uri } = req.query as { redirect_uri: string };
-    console.log(req.query);
+    console.log(req);
     (req.session as any).redirect_uri = redirect_uri;
     passport.authenticate('google', { scope: ['profile', 'email'], accessType: "offline" })(req, res, next);
   });

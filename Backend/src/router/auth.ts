@@ -11,13 +11,15 @@ authRouter.get('/google', (req, res, next) => {
     const { redirect_uri } = req.query as { redirect_uri: string };
     console.log(redirect_uri);
     req.session.redirect_uri = redirect_uri;
+    console.log("test");
+    console.log(req);
+    console.log(req.session);
     passport.authenticate('google', { scope: ['profile', 'email'], accessType: "offline" })(req, res, next);
   });
 
 authRouter.get("/google/redirect", passport.authenticate("google"), (req, res) => {
   console.log(req);
   console.log(req.session);
-  console.log(req.session.redirect_uri);
   res.redirect((req.session as any).redirect_uri);});
 
 // /api/auth/login

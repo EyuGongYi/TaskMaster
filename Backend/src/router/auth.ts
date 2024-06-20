@@ -18,9 +18,8 @@ authRouter.get('/google', (req, res, next) => {
   });
 
 authRouter.get("/google/redirect", passport.authenticate("google"), (req, res) => {
-  console.log(req);
-  console.log(req.session);
-  res.redirect((req.session as any).redirect_uri);});
+  res.redirect("exp://192.168.1.69:8081");
+});
 
 // /api/auth/login
 authRouter.get("/isLoggedIn", isLoggedIn);

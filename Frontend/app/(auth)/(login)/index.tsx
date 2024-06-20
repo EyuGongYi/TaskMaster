@@ -30,6 +30,7 @@ const LoginScreen = () => {
       native: "taskmaster://"
     })
     const authURL = SERVER_URL + "/api/auth/google";
+    console.log(redirectURI);
     await WebBrowser.openAuthSessionAsync(authURL, redirectURI);
   };
 

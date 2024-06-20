@@ -15,6 +15,8 @@ authRouter.get('/google', (req, res, next) => {
   });
 
 authRouter.get("/google/redirect", passport.authenticate("google"), (req, res) => {
+  console.log(req);
+  console.log(req.session);
   console.log(req.session.redirect_uri);
   res.redirect((req.session as any).redirect_uri);});
 

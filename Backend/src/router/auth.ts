@@ -14,7 +14,9 @@ authRouter.get('/google', (req, res, next) => {
     passport.authenticate('google', { scope: ['profile', 'email'], accessType: "offline" })(req, res, next);
   });
 
-authRouter.get("/google/redirect", passport.authenticate("google"), (req, res) => res.redirect((req.session as any).redirect_uri));
+authRouter.get("/google/redirect", passport.authenticate("google"), (req, res) => {
+  console.log(req.session.redirect_uri);
+  res.redirect((req.session as any).redirect_uri);});
 
 // /api/auth/login
 authRouter.get("/isLoggedIn", isLoggedIn);

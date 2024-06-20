@@ -16,8 +16,8 @@ axios.defaults.withCredentials = true
 //    }
 //};
 
-export async function login(email: string, password: string) {
-    await Linking.openURL("http://localhost:3000/api/auth/google");
+export async function login() {
+    await Linking.openURL( process.env.EXPO_PUBLIC_PORTURL + "/api/auth/google");
     //try {
     //    const res = await axios.get( process.env.EXPO_PUBLIC_PORTURL+ "/api/auth/google")
     //    .then(response => response.status);

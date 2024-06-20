@@ -1,19 +1,36 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, TextInput, Button, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import {login} from '@/scripts/auth';
 import { router } from 'expo-router';
+import * as AuthSession from "expo-auth-session";
+import * as WebBrowser from "expo-web-browser";
+import * as Linking from "expo-linking";
+
+WebBrowser.maybeCompleteAuthSession();
+const SERVER_URL = process.env.EXPO_PUBLIC_PORTURL;
 
 const LoginScreen = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const [sessionToken, setSessionToken] = useState(null);
   const [error, setError] = useState('');
 
+  useEffect(() => {
+    const handleRedirect = async (event: {url: string}) => {
+      const data = Linking.parse(event.url);
+      if (data.queryParams && data.queryParams.session_token) {
+        const token = data.queryParams.session_token as string;
+        console.log(token);
+      }
+    };
+    const subscription = Linking.addEventListener('url', handleRedirect);
+    return () => subscription.remove();
+  }, []);
+
   const handleLogin = async() => {
-    if (await login(username, password)) {
-      router.navigate("../(screens)")
-    } else {
-      setError('Incorrect username or password');
-    }
+    const redirectURI = AuthSession.makeRedirectUri({
+      native: "taskmaster://"
+    })
+    const authURL = SERVER_URL + "/api/auth/google";
+    await WebBrowser.openAuthSessionAsync(authURL, redirectURI);
   };
 
   const handleRegister = () => {
@@ -22,19 +39,6 @@ const LoginScreen = () => {
 
   return (
     <View style={styles.container}>
-      <TextInput
-        style={styles.input}
-        placeholder="Username"
-        value={username}
-        onChangeText={setUsername}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
       {error ? <Text style={styles.errorText}>{error}</Text> : null}
       <Button title="Login" onPress={handleLogin} />
       <TouchableOpacity onPress={handleRegister}>

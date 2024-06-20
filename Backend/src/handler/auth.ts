@@ -1,8 +1,6 @@
 import { Request, Response } from "express-serve-static-core";
-import { CreateUserDto } from "../dtos/CreateUser.dto";
-import { CreateUserQueryParams } from "../types/query-params";
 
-export async function loginUser(request: Request<{},{}, CreateUserDto, CreateUserQueryParams>, response: Response) {
+export async function loginUser(request: Request, response: Response) {
     console.log("logged in");
     response.sendStatus(200);
 }

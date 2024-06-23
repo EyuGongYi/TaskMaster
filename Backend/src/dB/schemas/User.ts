@@ -8,6 +8,12 @@ const UserSchema = new mongoose.Schema({
             return _t.email.slice(0,2);
         }
     },
+    googleRefreshToken: {
+        type: mongoose.SchemaTypes.String,
+    },
+    googleAccessToken: {
+        type: mongoose.SchemaTypes.String,
+    },
     email: {
         type: mongoose.SchemaTypes.String,
         required: true,

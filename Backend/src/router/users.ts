@@ -1,12 +1,10 @@
 import { Router } from "express";
 import { getUserByUsername, getUserUsername, setUserUsername } from "../handler/users";
+import passport from "passport";
 
 const userRouter = Router();
 
-userRouter.use((req, res, next) => {
-    if(req.user) next();
-    else res.send(401);
-});
+userRouter.use(passport.authenticate("jwt", {session: false}));
 
 // /api/users/username
 userRouter.get("/username", getUserUsername);

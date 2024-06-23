@@ -82,11 +82,11 @@ export async function googleLoginRedirect(request: Request, response: Response) 
             await User.findOneAndUpdate(user.email, {googleAccessToken: tokens.access_token, googleRefreshToken: tokens.refresh_token});
         } else {
             console.log("hello");
-            //return response.redirect("exp://192.168.1.69:8081?success=false&&message=NotInSession");
+            return response.redirect("exp://192.168.1.69:8081?success=false&&message=NotInSession");
         }
         oauth2Client.setCredentials(tokens);
         console.log("2");
-        //return response.redirect("exp://192.168.1.69:8081?success=true&&message=LoggedIn");
+        return response.redirect("exp://192.168.1.69:8081?success=true&&message=LoggedIn");
     }
     
 }

@@ -8,13 +8,13 @@ import { ActivityIndicator, StyleSheet, Text, View } from 'react-native';
 export default function index() {
     useEffect(() => {
       const loginCheck = async () => {
-        const name = await isLoggedIn();
-        name ? router.replace("(screens)"): router.replace("(auth)")
+        const state = await isLoggedIn();
+        state ? router.replace("(screens)"): router.replace("(auth)")
       }
       loginCheck();
     },[]);
     return (
-      <View>
+      <View style={styles.container}>
         <Text style={{textAlign: "center"}}>Connecting to server...</Text>
         <ActivityIndicator size="large"/>
       </View>

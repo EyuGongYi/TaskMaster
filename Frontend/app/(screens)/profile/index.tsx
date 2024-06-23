@@ -8,9 +8,6 @@ import { router } from "expo-router";
 WebBrowser.maybeCompleteAuthSession();
 const Server_URL = process.env.EXPO_PUBLIC_PORTURL;
 
-const handleLogin = () => {
-  console.log("hi")
-}
 export default function index() {
   const [val, setVal] = useState(null);
   

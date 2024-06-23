@@ -32,12 +32,15 @@ export async function register(email: string, password: string) {
 
 export async function isLoggedIn() {
     try {
-        const token = await SecureStore.getItem("Token");
-        const response = await axios.get( process.env.EXPO_PUBLIC_PORTURL+'/api/auth/isLoggedIn', {
+        const token = await SecureStore.getItemAsync("Token");
+        console.log(token);
+        console.log(process.env.EXPO_PUBLIC_PORTURL);
+        const response = await axios.get( process.env.EXPO_PUBLIC_PORTURL +'/api/auth/isLoggedIn', {
             headers: {
                 "Authorization": token
             }
         } );
+        console.log(response.data.success);
         return response.data.success;
       } catch (error) {
         console.error('Error checking if user is logged in:', error);

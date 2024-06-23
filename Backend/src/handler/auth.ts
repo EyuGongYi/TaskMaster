@@ -61,6 +61,7 @@ export async function loginUser(request: Request<{},{}, CreateUserDto, CreateUse
 }
 
 export async function isLoggedIn(request: Request, response: Response) {
+    console.log("hi");
     return response.status(200).send({
         success: true
     })

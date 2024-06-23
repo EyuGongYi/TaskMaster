@@ -8,6 +8,7 @@ import "./strategies/jwt";
 import "dotenv/config";
 import cors from "cors";
 import session from "express-session";
+import MongoStore from "connect-mongo";
 
 declare module "express-session" {
     interface SessionData {
@@ -33,6 +34,9 @@ export function createApp() {
             secret: process.env.SESSION_SECRET ||"ADD ur secret into .env",
             resave: false,
             saveUninitialized: false,
+            store: MongoStore.create({
+                mongoUrl: process.env.DB_URL ||"ADD ur DBUrl into .env",
+            }),
         })
     );
 

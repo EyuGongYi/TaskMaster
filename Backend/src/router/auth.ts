@@ -11,6 +11,7 @@ authRouter.post("/register", createUser);
 // /api/auth/login
 authRouter.post("/login", loginUser);
 
+authRouter.use(passport.authenticate("jwt"));
 // /api/auth/google
 authRouter.get("/google", googleLogin);
 
@@ -18,7 +19,7 @@ authRouter.get("/google", googleLogin);
 authRouter.get("/googleRedirect", googleLoginRedirect);
 
 // /api/auth/isLoggedIn
-authRouter.get("/isLoggedIn", passport.authenticate("jwt", {session: false}), isLoggedIn);
+authRouter.get("/isLoggedIn", isLoggedIn);
 
 
 

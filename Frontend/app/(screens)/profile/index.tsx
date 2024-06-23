@@ -4,6 +4,8 @@ import * as WebBrowser from "expo-web-browser"
 import * as AuthSession from "expo-auth-session"
 import * as Linking from "expo-linking"
 import { router } from "expo-router";
+import {WebView} from "react-native-webview";
+import * as SecureStore from "expo-secure-store";
 
 WebBrowser.maybeCompleteAuthSession();
 const Server_URL = process.env.EXPO_PUBLIC_PORTURL;
@@ -68,5 +70,8 @@ const styles = StyleSheet.create({
     fontSize: 18,
     alignSelf: "center",
     marginTop: 20,
+  },
+  webview: {
+    flex: 1,
   }
 });

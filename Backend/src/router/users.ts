@@ -4,11 +4,11 @@ import passport from "passport";
 
 const userRouter = Router();
 
-userRouter.use(passport.authenticate("jwt", {session: false}));
+userRouter.use(passport.authenticate("jwt"));
 
 // /api/users/username
 userRouter.get("/username", getUserUsername);
-userRouter.post("/username", setUserUsername)
+userRouter.post("/username", setUserUsername);
 // /api/users/123
 userRouter.get("/:username", getUserByUsername);
 

@@ -1,35 +1,39 @@
 import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { Link } from 'expo-router';
+import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
+import { useNavigation, useRoute, NavigationProp, RouteProp } from "@react-navigation/native";
 import { Calendar } from 'react-native-calendars';
+import { RootStackParamList } from '../../types';
 
 interface Event {
   name: string;
   color: string;
-  time?: string; // Assuming each event has an optional time property
+  time?: string;
 }
 
 interface Events {
   [date: string]: Event[];
 }
 
-const events: Events = {
-  '2024-06-01': [{ name: 'Assignment 1', color: 'green', time: '10:00' }],
-  '2024-06-02': [
-    { name: 'Workshop', color: 'red', time: '09:00' },
-    { name: 'Orbital', color: 'red', time: '12:00' },
-    { name: 'Meeting', color: 'blue', time: '15:00' },
-    { name: 'Dinner', color: 'purple', time: '18:00' },
-  ],
-  '2024-06-05': [{ name: 'Meeting', color: 'green', time: '14:00' }],
-  '2024-06-17': [{ name: 'Hari Raya Haji', color: 'red', time: 'All Day' }],
-};
+export default function CalendarScreen() {
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+  const route = useRoute<RouteProp<RootStackParamList, 'Calendar'>>();
 
-export default function Index() {
+  const events: Events = route.params?.events.reduce((acc, event) => {
+    const date = new Date(event.eventDate).toISOString().split('T')[0];
+    if (!acc[date]) {
+      acc[date] = [];
+    }
+    acc[date].push({
+      name: event.eventName,
+      color: 'blue', // Set a default color for simplicity
+      time: new Date(event.eventTime).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    });
+    return acc;
+  }, {} as Events) || {};
+
   const renderEvent = (day: { dateString: string }) => {
     const event = events[day.dateString];
     if (event) {
-      // Sort events by time
       const sortedEvents = event.sort((a, b) => (a.time || '').localeCompare(b.time || ''));
 
       return (
@@ -70,19 +74,24 @@ export default function Index() {
           </View>
         )}
       />
+      <TouchableOpacity
+        style={styles.addButton}
+        onPress={() => navigation.navigate('AddEvent')}>
+        <Text style={styles.addButtonText}>Add Event</Text>
+      </TouchableOpacity>
       <View style={styles.tabBar}>
-        <Link href="screens/home" style={styles.tabItem}>
+        <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('Home')}>
           <Text>Home</Text>
-        </Link>
-        <Link href="screens/calendar" style={styles.tabItem}>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('Calendar')}>
           <Text>Calendar</Text>
-        </Link>
-        <Link href="screens/recommendation" style={styles.tabItem}>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('Recommend')}>
           <Text>Recommended Workflow</Text>
-        </Link>
-        <Link href="screens/sync" style={styles.tabItem}>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('Sync')}>
           <Text>Sync with Friend</Text>
-        </Link>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -135,20 +144,32 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   tabBar: {
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center',
-    backgroundColor: 'lightgrey',
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+    backgroundColor: "white",
     paddingVertical: 10,
     paddingHorizontal: 20,
-    position: 'absolute',
+    position: "absolute",
     bottom: 0,
     left: 0,
     right: 0,
   },
   tabItem: {
     flex: 1,
-    alignItems: 'center',
+    alignItems: "center",
     padding: 10,
+  },
+  addButton: {
+    position: 'absolute',
+    bottom: 70,
+    right: 20,
+    backgroundColor: '#4CAF50',
+    padding: 10,
+    borderRadius: 5,
+  },
+  addButtonText: {
+    color: '#fff',
+    fontWeight: 'bold',
   },
 });

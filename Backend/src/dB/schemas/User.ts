@@ -1,36 +1,36 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
 
 const UserSchema = new mongoose.Schema({
-    username: {
-        type: mongoose.SchemaTypes.String,
-        default: function() {
-            const _t = this as any; // tslint:disable-line
-            return _t.email.slice(0,2);
-        }
+  username: {
+    type: mongoose.SchemaTypes.String,
+    default: function () {
+      const _t = this as any; // tslint:disable-line
+      return _t.email.slice(0, 2);
     },
-    email: {
-        type: mongoose.SchemaTypes.String,
-        required: true,
-        unique: true,
-        lowercase: true,
-    },
-    password: {
-        type: mongoose.SchemaTypes.String,
-        required: true,
-    },
-    createdAt: {
-        type: mongoose.SchemaTypes.Date,
-        required: true,
-        default: new Date(),
-    },
-    canvasCredential: {
-        type: mongoose.SchemaTypes.String,
-    },
-    events: {
-        type: mongoose.SchemaTypes.Map,
-        required: true,
-        default: new Map(),
-    },
+  },
+  email: {
+    type: mongoose.SchemaTypes.String,
+    required: true,
+    unique: true,
+    lowercase: true,
+  },
+  password: {
+    type: mongoose.SchemaTypes.String,
+    required: true,
+  },
+  createdAt: {
+    type: mongoose.SchemaTypes.Date,
+    required: true,
+    default: new Date(),
+  },
+  canvasCredential: {
+    type: mongoose.SchemaTypes.String,
+  },
+
+  events: {
+    type: [{ eventName: String, eventDate: String, eventTime: String }],
+    default: [],
+  },
 });
 
-export const User = mongoose.model("User", UserSchema);
+export const User = mongoose.model('User', UserSchema);

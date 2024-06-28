@@ -1,18 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { Text, View, StyleSheet } from "react-native";
-import { Link } from "expo-router";
+import { Text, View, StyleSheet, TouchableOpacity } from "react-native";
+import { useNavigation, NavigationProp } from "@react-navigation/native";
 import getUsername from "@/scripts/getUsername";
+import { RootStackParamList } from '../../types';
 
-export default  function Index() {
+export default function Index() {
   const [username, setUsername] = useState('');
+  const navigation = useNavigation<NavigationProp<RootStackParamList>>();
+
   useEffect(() => {
     const fetchUsername = async () => {
       const name = await getUsername();
       setUsername(name);
-    }
+    };
     fetchUsername();
-  },[]);
-  
+  }, []);
+
   const currentDate = new Date();
   const formattedDate = currentDate.toLocaleDateString(undefined, {
     weekday: 'long', year: 'numeric', month: 'long', day: 'numeric'
@@ -57,19 +60,24 @@ export default  function Index() {
           </View>
         ))}
       </View>
+      <View>
+        <TouchableOpacity onPress={() => navigation.navigate('AddEvent')}>
+        <Text>Add Event</Text>
+</TouchableOpacity>
+      </View>
       <View style={styles.tabBar}>
-        <Link href="screens/home" style={styles.tabItem}>
+        <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('Home')}>
           <Text>Home</Text>
-        </Link>
-        <Link href="screens/calendar" style={styles.tabItem}>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('Calendar')}>
           <Text>Calendar</Text>
-        </Link>
-        <Link href="screens/recommendation" style={styles.tabItem}>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('Recommend', { alerts })}>
           <Text>Recommended Workflow</Text>
-        </Link>
-        <Link href="screens/sync" style={styles.tabItem}>
+        </TouchableOpacity>
+        <TouchableOpacity style={styles.tabItem} onPress={() => navigation.navigate('Sync')}>
           <Text>Sync with Friend</Text>
-        </Link>
+        </TouchableOpacity>
       </View>
     </View>
   );
@@ -142,7 +150,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
-    backgroundColor: "lightgrey",
+    backgroundColor: "white",
     paddingVertical: 10,
     paddingHorizontal: 20,
     position: "absolute",

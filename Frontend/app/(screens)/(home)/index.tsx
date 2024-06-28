@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from "react";
 import { Text, View, StyleSheet } from "react-native";
-import getUsername from "@/scripts/getUsername";
+
 import Alert from "./components/alerts";
 import TodaySchedule from "./components/todaySchedule";
 import AssignmentAlert from "@/constants/AssignmentAlert";
 import CalendarEvent from "@/constants/CalendarEvent";
+import { useAuth } from "@/hooks/authContext";
 
 // Mock data for AssignmentAlert
 const alerts: AssignmentAlert[] = [
@@ -20,14 +21,7 @@ const events: CalendarEvent[] = [
 ];
 
 export default  function Index() {
-  const [username, setUsername] = useState('');
-  useEffect(() => {
-    const fetchUsername = async () => {
-      const name = await getUsername();
-      setUsername(name);
-    }
-    fetchUsername();
-  },[]);
+  const context = useAuth();
   
   const currentDate = new Date();
   const formattedDate = currentDate.toLocaleDateString(undefined, {
@@ -36,10 +30,11 @@ export default  function Index() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Welcome, {username}!</Text>
+      <Text style={styles.text}>Welcome, {context.user?.displayName}!</Text>
       <Text style={styles.dateText}>{formattedDate}</Text>
       <TodaySchedule events = {events}/>
       <Alert alerts = {alerts}/>
+      <></>
   </View>
   );
 }

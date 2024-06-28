@@ -6,12 +6,16 @@ import * as Linking from "expo-linking"
 import { router } from "expo-router";
 import {WebView} from "react-native-webview";
 import * as SecureStore from "expo-secure-store";
+import { useAuth } from '@/hooks/authContext'
+import { GoogleSignin } from '@react-native-google-signin/google-signin'
+import {auth} from "../../../firebaseConfig"
 
 WebBrowser.maybeCompleteAuthSession();
 const Server_URL = process.env.EXPO_PUBLIC_PORTURL;
 
 export default function index() {
   const [val, setVal] = useState(null);
+  const context = useAuth();
   
   useEffect(() => {
     const handleRedirect = async (event: {url: string}) => {
@@ -26,28 +30,26 @@ export default function index() {
   }, []);
 
   const handleLogin = async() => {
-    const redirectURI = AuthSession.makeRedirectUri({
-      native: "taskmaster://"
-    })
-    const authURL =  Server_URL+ `/api/auth/google`;
-    console.log(redirectURI);
-    await WebBrowser.openAuthSessionAsync(authURL, redirectURI);
+    const logout = async() => {
+      await GoogleSignin.revokeAccess();
+      await GoogleSignin.signOut();
+      context.signOut();
+
+    };
+    await logout();
   };
 
-  const handleRegister = () => {
-    router.navigate('register');
-  };
+  
 
   return (
     <View style={styles.container}>
       <Pressable onPress={handleLogin}>
-        <Text style={styles.text}>G</Text>
+        <Text style={styles.text}>Login Out</Text>
       </Pressable>
       <Text>{val}</Text>
     </View>
   )
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -59,7 +61,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     fontSize: 30,
     color: "white",
-    backgroundColor: "green",
+    backgroundColor: "black",
     borderRadius: 50,
     paddingVertical: 15,
     paddingHorizontal: 20,

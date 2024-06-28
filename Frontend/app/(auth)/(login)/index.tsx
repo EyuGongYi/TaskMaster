@@ -1,45 +1,37 @@
-import React, { useState } from 'react';
-import { View, TextInput, Button, StyleSheet, Text, TouchableOpacity } from 'react-native';
-import {login} from '@/scripts/auth';
-import { router } from 'expo-router';
+import React, { useEffect } from 'react';
+import { View, StyleSheet, Text} from 'react-native';
+import {GoogleSignin, GoogleSigninButton } from "@react-native-google-signin/google-signin";
+import { auth } from '@/firebaseConfig';
+import { GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
+import { useAuth } from '@/hooks/authContext';
 
 const LoginScreen = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [error, setError] = useState('');
+  const {user,signOut, setTokens} = useAuth();
+  useEffect(() => {
+    GoogleSignin.configure({
+      webClientId: process.env.EXPO_PUBLIC_WEB_CLIENT_ID,
+      offlineAccess:true,
+    });
+  },[]); 
+  
 
-  const handleLogin = async() => {
-    if (await login(username, password)) {
-      router.navigate("../(screens)")
-    } else {
-      setError('Incorrect username or password');
+  const handleSignIn = async () => {
+    try {
+      await GoogleSignin.hasPlayServices();
+      const user = await GoogleSignin.signIn();
+      const data = await signInWithCredential(auth, GoogleAuthProvider.credential(user.idToken));
+      const token = await GoogleSignin.getTokens();
+      setTokens(token);
+    } catch (e) {
+      console.log(e);
     }
-  };
+  }
 
-  const handleRegister = () => {
-    router.navigate('register');
-  };
 
   return (
     <View style={styles.container}>
-      <TextInput
-        style={styles.input}
-        placeholder="Username"
-        value={username}
-        onChangeText={setUsername}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        value={password}
-        onChangeText={setPassword}
-        secureTextEntry
-      />
-      {error ? <Text style={styles.errorText}>{error}</Text> : null}
-      <Button title="Login" onPress={handleLogin} />
-      <TouchableOpacity onPress={handleRegister}>
-        <Text style={styles.registerText}>Don't have an account? Register here</Text>
-      </TouchableOpacity>
+      <Text style={styles.header}>TaskMaster</Text>
+      <GoogleSigninButton style={{alignSelf:"center", margin: 150}} size={GoogleSigninButton.Size.Standard} color={GoogleSigninButton.Color.Dark} onPress={handleSignIn}></GoogleSigninButton>
     </View>
   );
 };
@@ -48,24 +40,20 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
+    alignContent: "center",
     padding: 16,
   },
-  input: {
-    height: 40,
-    borderColor: 'gray',
-    borderWidth: 1,
-    marginBottom: 12,
-    padding: 8,
+  header: {
+    alignSelf: "center",
+    textAlign: "center",
+    fontWeight: "bold",
+    fontSize: 30,
+    backgroundColor: "#16a5fc",
+    borderRadius: 10,
+    paddingHorizontal: 10,
+    color: "white",
   },
-  errorText: {
-    color: 'red',
-    marginBottom: 12,
-  },
-  registerText: {
-    color: 'blue',
-    marginTop: 12,
-    textAlign: 'center',
-  },
+  
 });
 
 export default LoginScreen;

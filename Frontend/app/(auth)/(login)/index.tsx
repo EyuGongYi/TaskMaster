@@ -10,7 +10,8 @@ const LoginScreen = () => {
   useEffect(() => {
     GoogleSignin.configure({
       webClientId: process.env.EXPO_PUBLIC_WEB_CLIENT_ID,
-      offlineAccess:true,
+      offlineAccess: true,
+      scopes: [`https://www.googleapis.com/auth/calendar`],
     });
   },[]); 
   
@@ -19,9 +20,7 @@ const LoginScreen = () => {
     try {
       await GoogleSignin.hasPlayServices();
       const user = await GoogleSignin.signIn();
-      const data = await signInWithCredential(auth, GoogleAuthProvider.credential(user.idToken));
-      const token = await GoogleSignin.getTokens();
-      setTokens(token);
+      await signInWithCredential(auth, GoogleAuthProvider.credential(user.idToken));
     } catch (e) {
       console.log(e);
     }

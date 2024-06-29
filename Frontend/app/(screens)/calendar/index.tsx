@@ -1,122 +1,109 @@
-import React from 'react';
-import { View, Text, StyleSheet } from 'react-native';
-import { Calendar } from 'react-native-calendars';
+import { View, Text, StyleSheet, Pressable } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { router } from 'expo-router';
+import { Agenda, AgendaEntry } from 'react-native-calendars';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
-interface Event {
-  name: string;
-  color: string;
-  time?: string; // Assuming each event has an optional time property
+
+interface Events{
+  [date: string] : AgendaEntry[];
 }
 
-interface Events {
-  [date: string]: Event[];
-}
-
-const events: Events = {
-  '2024-06-01': [{ name: 'Assignment 1', color: 'green', time: '10:00' }],
-  '2024-06-02': [
-    { name: 'Workshop', color: 'red', time: '09:00' },
-    { name: 'Orbital', color: 'red', time: '12:00' },
-    { name: 'Meeting', color: 'blue', time: '15:00' },
-    { name: 'Dinner', color: 'purple', time: '18:00' },
-  ],
-  '2024-06-05': [{ name: 'Meeting', color: 'green', time: '14:00' }],
-  '2024-06-17': [{ name: 'Hari Raya Haji', color: 'red', time: 'All Day' }],
-};
-
-export default function Index() {
-  const renderEvent = (day: { dateString: string }) => {
-    const event = events[day.dateString];
-    if (event) {
-      // Sort events by time
-      const sortedEvents = event.sort((a, b) => (a.time || '').localeCompare(b.time || ''));
-
-      return (
-        <View style={styles.eventsContainer}>
-          {sortedEvents.slice(0, 3).map((item, index) => (
-            <View key={index} style={[styles.event, { backgroundColor: item.color }]}>
-              <Text style={styles.eventText}>{item.name}</Text>
-            </View>
-          ))}
-          {sortedEvents.length > 3 && (
-            <View style={[styles.event, styles.moreEvent]}>
-              <Text style={styles.eventText}>...</Text>
-            </View>
-          )}
-        </View>
-      );
+const getEvents = async () => {
+  const temp = await AsyncStorage.getItem("events");
+  const event = temp ? JSON.parse(temp): {};
+  const res: Events = event.reduce((acc: any, event: any) => {
+    const date = event.eventDate;
+    if (!acc[date]) {
+      acc[date] = [];
     }
-    return null;
-  };
+    acc[date].push({name: event.eventName, height: 20, day: event.eventDetail});
+    return acc;
+  }, {} as Events) || {};
+  return res;
+}
+
+
+
+export default function index() {
+  const [events, setEvents] = useState<Events>();
+  
+  const getEvents = async () => {
+    const temp = await AsyncStorage.getItem("events");
+    const event = temp ? JSON.parse(temp): [];
+    const res: Events = event.reduce((acc: any, event: any) => {
+      const date = event.eventDate;
+      if (!acc[date]) {
+        acc[date] = [];
+      }
+      acc[date].push({name: event.eventName, height: 20, day: `Deadline: ${event.eventEnd}`});
+      return acc;
+    }, {} as Events) || {};
+    setEvents(res);
+  }
+  useEffect(() => {getEvents()}, []);
 
   return (
-    <View style={styles.container}>
-      <Calendar
-        style={styles.calendar}
-        markingType={'custom'}
-        markedDates={{
-          ...Object.keys(events).reduce((acc, date) => {
-            acc[date] = { customStyles: { container: styles.customContainer, text: styles.customText } };
-            return acc;
-          }, {} as { [date: string]: { customStyles: { container: object; text: object } } }),
-        }}
-        dayComponent={({ date, state }) => (
-          <View style={styles.dayContainer}>
-            <Text style={[styles.dayText, state === 'disabled' ? styles.disabledText : {}]}>
-              {date?.day}
-            </Text>
-            {date && renderEvent(date)}
-          </View>
+    <SafeAreaView style={styles.container}>
+      <Agenda
+        items= {
+          events
+        }
+        renderItem={(item, isFirst) => (
+          <Pressable style={styles.item} onPress={() => {console.log(item.height)}}>
+            <Text style={styles.itemText}>{item.name}</Text>
+            <Text style={styles.itemText}>{item.day}</Text>
+          </Pressable>
         )}
       />
-    </View>
-  );
+      <View style={styles.addEventButton}>
+        <Pressable  onPress={() => {router.push("/addEvent")}}>
+          <Text style={styles.addEvent}>+</Text>
+        </Pressable>
+      </View>
+        
+      </SafeAreaView>
+  )
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
   },
-  calendar: {
-    height: '100%',
+  item: {
+    flex:1,
+    backgroundColor: "skyblue",
+    borderRadius: 15,
+    padding: 10,
+    marginRight: 10,
+    marginTop: 25,
+    paddingBottom: 20,
+    height: 100,
   },
-  dayContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginVertical: 20,
-    position: 'relative',
+  itemText: {
+    fontSize: 20,
+    color: "white",
   },
-  dayText: {
-    color: 'black',
+  addEventButton: {
+    height: 70,
+    justifyContent: "center",
+    alignItems: "center",
   },
-  disabledText: {
-    color: 'gray',
+  addEvent: {
+    fontWeight: "bold",
+    fontSize: 30,
+    color: "white",
+    backgroundColor: "black",
+    borderRadius: 75,
+    paddingHorizontal: 15,
+    textAlign: "center",
   },
-  eventsContainer: {
-    alignItems: 'center',
+  loginButton: {
+    fontWeight: "bold",
+    fontSize: 30,
+    backgroundColor: "orange",
+    paddingHorizontal: 20,
+    textAlign: "center",
   },
-  event: {
-    marginTop: 5,
-    borderRadius: 5,
-    padding: 2,
-    width: '150%',
-    alignItems: 'center',
-  },
-  eventText: {
-    color: 'white',
-    fontWeight: 'bold',
-    fontSize: 8,
-    textAlign: 'center',
-  },
-  moreEvent: {
-    backgroundColor: 'grey',
-  },
-  customContainer: {
-    backgroundColor: '#4CAF50',
-    borderRadius: 10,
-  },
-  customText: {
-    color: '#fff',
-    fontWeight: 'bold',
-  }
 });

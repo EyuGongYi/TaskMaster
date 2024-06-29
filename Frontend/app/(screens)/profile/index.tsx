@@ -31,9 +31,14 @@ export default function index() {
 
   const handleLogin = async() => {
     const logout = async() => {
-      await GoogleSignin.revokeAccess();
-      await GoogleSignin.signOut();
-      context.signOut();
+      try {
+        context.signOut();
+        await GoogleSignin.revokeAccess();
+        await GoogleSignin.signOut();
+      } catch (e) {
+        console.log(e);
+      }
+      
 
     };
     await logout();
@@ -67,13 +72,4 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
     textAlign: "center",
   },
-  dateText: {
-    color: "black",
-    fontSize: 18,
-    alignSelf: "center",
-    marginTop: 20,
-  },
-  webview: {
-    flex: 1,
-  }
 });

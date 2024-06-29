@@ -1,5 +1,5 @@
 import { auth } from "@/firebaseConfig";
-import { GetTokensResponse } from "@react-native-google-signin/google-signin";
+import { GetTokensResponse, GoogleSignin } from "@react-native-google-signin/google-signin";
 import { router, useRootNavigationState, useSegments } from "expo-router";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import { createContext, useContext, useEffect, useState } from "react";
@@ -66,7 +66,9 @@ function userProtectedRoute(user: User) {
 
     useEffect(() => {
         //to handle the navigation before stuff gets mounted issue
-        if (!navigationState.key || hasNavigated) return;
+        if (!navigationState.key || hasNavigated) {
+            return;
+        }
         const inAuthGroup = segments[0] === "/(auth)";
         
         if(!user.uid && !inAuthGroup) {
@@ -98,6 +100,8 @@ export function AuthProvider({children}: React.PropsWithChildren):JSX.Element {
                     lastLoginAt: user.metadata.creationTime!,
                 };
                 setUser(userData);
+                const token = await GoogleSignin.getTokens();
+                setToken(token);
                 router.replace("/(screens)");
             } else {
                 console.log("User is not authenticated");

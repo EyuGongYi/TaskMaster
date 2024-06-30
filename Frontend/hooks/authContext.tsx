@@ -1,18 +1,14 @@
 import { auth } from "@/firebaseConfig";
+import { createUserCalendar, setOfflineToken } from "@/scripts/googleApi";
+import { EventList, Events, GoogleEventType } from "@/types/event";
+import User from "@/types/user";
 import { GetTokensResponse, GoogleSignin } from "@react-native-google-signin/google-signin";
 import { router, useRootNavigationState, useSegments } from "expo-router";
 import { onAuthStateChanged, signOut } from "firebase/auth";
-import { createContext, useContext, useEffect, useState } from "react";
+import React, { createContext, useContext, useEffect, useState } from "react";
 
-interface User {
-    uid: string,
-    providerId: string,
-    displayName: string,
-    email: string,
-    createdAt: string,
-    lastLoginAt: string,
-}
 
+// Initial Variable States
 const initialState = {
     uid: "",
     providerId: "",
@@ -22,32 +18,30 @@ const initialState = {
     lastLoginAt: "",
 }
 
-const initialTokenState = {
-    idToken: "",
-    accessToken: "",
-}
 
+// For creating  Context
 interface ContextInterface {
     user: User | null;
-    token: any,
+    eventList: Events | undefined,
+    setEventList: React.Dispatch<React.SetStateAction<Events| undefined>>;
     signIn: React.Dispatch<React.SetStateAction<User>>;
     signOut: () => void;
-    setTokens: React.Dispatch<React.SetStateAction<GetTokensResponse>>;
 }
 
+//Initial Context States
 const contextDefaultState: ContextInterface = {
     user: initialState,
-    token: initialTokenState,
+    eventList: {},
+    setEventList: () => {},
     signIn: () => {},
     signOut: () => {},
-    setTokens: () => {},
 }
 
 
-
+//Create Context
 const AuthContext = createContext(contextDefaultState);
 
-
+//To get Context variables
 export function useAuth():ContextInterface {
     const context = useContext<ContextInterface>(AuthContext);
     if (context == undefined) {
@@ -57,7 +51,7 @@ export function useAuth():ContextInterface {
     return context;
 }
 
-// Hook
+// Hook For initial rendering
 function userProtectedRoute(user: User) {
     const segments = useSegments();
     const navigationState = useRootNavigationState();
@@ -84,7 +78,7 @@ function userProtectedRoute(user: User) {
 //Provider
 export function AuthProvider({children}: React.PropsWithChildren):JSX.Element {
     const [user, setUser] = useState<User>(initialState);
-    const [token, setToken] = useState<GetTokensResponse>(initialTokenState);
+    const [eventList, setEventList] = useState<Events>();
 
     userProtectedRoute(user);
 
@@ -100,8 +94,9 @@ export function AuthProvider({children}: React.PropsWithChildren):JSX.Element {
                     lastLoginAt: user.metadata.creationTime!,
                 };
                 setUser(userData);
-                const token = await GoogleSignin.getTokens();
-                setToken(token);
+                await GoogleSignin.signInSilently();
+                createUserCalendar(userData);
+                setOfflineToken(userData);
                 router.replace("/(screens)");
             } else {
                 console.log("User is not authenticated");
@@ -115,8 +110,8 @@ export function AuthProvider({children}: React.PropsWithChildren):JSX.Element {
         <AuthContext.Provider
             value={{
                 user,
-                token,
-                setTokens: setToken,
+                eventList,
+                setEventList: setEventList,
                 signIn: setUser,
                 signOut: () => {
                     setUser(initialState);

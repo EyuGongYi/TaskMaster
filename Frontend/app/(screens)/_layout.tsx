@@ -26,6 +26,20 @@ export default function TabLayout() {
         }}
       />
       <Tabs.Screen
+        name="sync"
+        options={{
+          title: 'Sync',
+          tabBarIcon: ({ color }) => <FontAwesome size={28} name="arrow-circle-down" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="recommendation"
+        options={{
+          title: 'Recommendations',
+          tabBarIcon: ({ color }) => <FontAwesome size={28} name="calendar-plus-o" color={color} />,
+        }}
+      />
+      <Tabs.Screen
         name="profile"
         options={{
           title: 'Profile',

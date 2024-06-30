@@ -1,57 +1,40 @@
 import { View, Text, StyleSheet, Pressable } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { router } from 'expo-router';
 import { Agenda, AgendaEntry } from 'react-native-calendars';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useAuth } from '@/hooks/authContext';
+import { Events, GoogleEventType } from '@/types/event';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-
-interface Events{
-  [date: string] : AgendaEntry[];
-}
-
-const getEvents = async () => {
+export const getEvents = async (setEventList: Function) => {
   const temp = await AsyncStorage.getItem("events");
-  const event = temp ? JSON.parse(temp): {};
+  const event: Array<GoogleEventType> = temp ? JSON.parse(temp): [];
   const res: Events = event.reduce((acc: any, event: any) => {
-    const date = event.eventDate;
+    const date = event.eventDate.split("T")[0];
     if (!acc[date]) {
       acc[date] = [];
     }
-    acc[date].push({name: event.eventName, height: 20, day: event.eventDetail});
+    acc[date].push({name: event.eventName, height: event.eventDetail, day: `Deadline: ${new Date(event.eventEnd).toDateString()}`});
     return acc;
   }, {} as Events) || {};
-  return res;
+  console.log(event);
+  setEventList(res);
 }
 
-
-
 export default function index() {
-  const [events, setEvents] = useState<Events>();
+  const {eventList, setEventList} = useAuth();
   
-  const getEvents = async () => {
-    const temp = await AsyncStorage.getItem("events");
-    const event = temp ? JSON.parse(temp): [];
-    const res: Events = event.reduce((acc: any, event: any) => {
-      const date = event.eventDate;
-      if (!acc[date]) {
-        acc[date] = [];
-      }
-      acc[date].push({name: event.eventName, height: 20, day: `Deadline: ${event.eventEnd}`});
-      return acc;
-    }, {} as Events) || {};
-    setEvents(res);
-  }
-  useEffect(() => {getEvents()}, []);
+  useEffect(() => {getEvents(setEventList)}, []);
 
   return (
     <SafeAreaView style={styles.container}>
       <Agenda
         items= {
-          events
+          eventList
         }
         renderItem={(item, isFirst) => (
-          <Pressable style={styles.item} onPress={() => {console.log(item.height)}}>
+          <Pressable style={styles.item} onPress={() => {console.log(eventList)}}>
             <Text style={styles.itemText}>{item.name}</Text>
             <Text style={styles.itemText}>{item.day}</Text>
           </Pressable>

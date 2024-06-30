@@ -2,7 +2,7 @@
 import { initializeApp } from "firebase/app"
 import { getAuth, getReactNativePersistence, GoogleAuthProvider, initializeAuth} from "firebase/auth"
 import ReactNativeAsyncStorage from "@react-native-async-storage/async-storage";
-import {Firestore, getFirestore} from "firebase/firestore";
+import {Firestore, getFirestore, initializeFirestore} from "firebase/firestore";
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
 

@@ -1,10 +1,10 @@
 import { mockRequest, mockResponse } from "../../__mocks__";
-import { getUsers } from "../../handler/users";
+import { getUserByUsername } from "../../handler/users";
 
 
 describe("getUsers", () => {
     it("should return an array of users", () => {
-        getUsers(mockRequest, mockResponse);
+        getUserByUsername(mockRequest, mockResponse);
         expect(mockResponse.send).
         toHaveBeenCalledWith([]);
     });

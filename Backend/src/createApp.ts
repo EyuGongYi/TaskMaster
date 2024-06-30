@@ -4,13 +4,21 @@ import userRouter from "./router/users";
 import authRouter from "./router/auth";
 import passport from "passport";
 import "./strategies/local";
-import session from "express-session";
-import MongoStore from "connect-mongo";
+import "./strategies/jwt";
 import "dotenv/config";
 import cors from "cors";
+import session from "express-session";
+import MongoStore from "connect-mongo";
+
+declare module "express-session" {
+    interface SessionData {
+        state: string;
+    }
+}
 
 // Creates a Express Application
 export function createApp() {
+    
     // Init Application
     const app = express();
     app.use(cors());
@@ -18,7 +26,9 @@ export function createApp() {
     //Middlewares
     // allow receiving of json (Middleware)
     app.use(express.json());
-
+    app.use(express.urlencoded({extended: true}));
+    
+    app.use(passport.initialize());
     app.use(session(
         {
             secret: process.env.SESSION_SECRET ||"ADD ur secret into .env",
@@ -29,9 +39,7 @@ export function createApp() {
             }),
         })
     );
-    
-    app.use(passport.initialize());
-    app.use(passport.session());
+
     
     //Registering of routers
     app.use("/api/users", userRouter);

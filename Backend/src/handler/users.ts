@@ -5,7 +5,7 @@ import { EditUserDto } from "../dtos/EditUser.dto";
 
 export function getUserUsername(request: Request, response: Response) {
     const userDb: any = request.user;
-    response.send(userDb.username);
+    response.status(200).send({username: userDb.username});
 };
 
 export async function setUserUsername(request: Request<{},{}, EditUserDto>, response: Response) {

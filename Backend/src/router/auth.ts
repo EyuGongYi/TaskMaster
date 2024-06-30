@@ -1,6 +1,5 @@
 import { Router } from "express";
-import { createUser, isLoggedIn, loginUser } from "../handler/auth";
-import { createEvent, getEvents } from "../handler/event";
+import { createUser, googleLoginRedirect, googleLogin, isLoggedIn, loginUser } from "../handler/auth";
 import passport from "passport";
 
 // /api/auth
@@ -10,15 +9,18 @@ const authRouter = Router();
 authRouter.post("/register", createUser);
 
 // /api/auth/login
-authRouter.post("/login", passport.authenticate("local"), loginUser);
+authRouter.post("/login", loginUser);
 
-// /api/auth/login
+authRouter.use(passport.authenticate("jwt"));
+// /api/auth/google
+authRouter.get("/google", googleLogin);
+
+// /api/auth/googleRedirect
+authRouter.get("/googleRedirect", googleLoginRedirect);
+
+// /api/auth/isLoggedIn
 authRouter.get("/isLoggedIn", isLoggedIn);
 
-// /api/auth/createEvent
-authRouter.post('/createEvent', createEvent);
 
-// /api/auth/getEvents
-authRouter.get('/getEvents', getEvents);
 
 export default authRouter;

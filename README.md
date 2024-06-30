@@ -1,89 +1,310 @@
-# **Team Name**
+NUS Orbital 2024 - Milestone 2
 
+
+Motivation	2
+Aim	2
+User Stories	3
+Milestones	3
+Milestone 1	3
+Milestone 2	4
+Timeline and Development Plan	6
+Features	8
+Google Login and Google Calendar Integration	8
+Description	8
+Implementation Philosophy	8
+Implementation Challenges	8
+Diagrams/Screenshots	9
+Home Page	10
+Description	10
+Implementation Philosophy	10
+Implementation Challenges	11
+Diagrams/Screenshots:	11
+Calendar	12
+Description	12
+Implementation Philosophy	12
+Implementation Challenges	12
+Diagrams/Screenshots	13
+Canvas Assignment Checker (Incomplete)	14
+Description	14
+Automated script to monitor CANVAS for new announcements and assignments, notifying users accordingly.	14
+Implementation Philosophy	14
+Implementation Challenges	14
+Diagrams/Screenshots	14
+Suggested Workflow Feature (Incomplete)	14
+Description	15
+Implementation Philosophy	15
+Implementation Challenges	15
+Diagrams/Screenshots:	15
+Mod Choice Bidding Aid (Incomplete)	15
+Description	15
+Implementation Philosophy	15
+Implementation Challenges	15
+Diagrams/Screenshots:	15
+Widget (Incomplete)	15
+Description	16
+Implementation Philosophy	16
+Implementation Challenges	16
+Sync With Friend (Incomplete)	16
+Description	16
+Implementation Philosophy	16
+Implementation Challenges	16
+Diagrams/Screenshots:	17
+
+	
+Team Name:
 GrassTouchers
+Proposed Level of Achievement: 
+Apollo 11
 
-# **Proposed Level of Achievement**
-
-Apollo 11 
-
-# **Product**
-TaskMaster
-
-# **Motivation**
-
+Motivation
 NUS students face a myriad of challenges in managing their time efficiently, keeping track of numerous assignments, and balancing study sessions with social activities. Currently, there are existing tools that offer fragmented solutions that address these challenges in isolation, leading to a scattered and inefficient management of tasks and schedules. This gap in holistic, integrated solutions motivates our project.
-
-# **Aim**
-
+Aim
 Our aim is to develop a comprehensive system that not only enhances individual productivity but also fosters a collaborative and supportive study culture among students. We hope to create an app to streamline task management and optimize schedules, allowing students to finish their work more effectively and providing a better work-life balance
 
-# **Features**
 
-1. Features 1 (core): Calendar with course timetable and additional assignments from CANVAS/ user-added
-2. Feature 2 (core): Bot to check CANVAS for new announcements/ assignments. Announcements will be added to an announcement list, and assignments onto a To-Do List. Users will be notified when there is a new announcement/assignment
-3. Feature 3 (core): Algorithm to arrange all assignments into calendar as a suggested workflow (depending on duration to complete assignments and deadline)
-4. Feature 4 (core): Give recommendation for arrangement of mod choice slots for mod bidding.
-5. Feature 5 (extension): Widget to allow user to see calendar/ to-do list easily
-6. Feature 6 (extension): Allow for users to link timetables with each other to find/ arrange common timings for group projects/ study sessions
+User Stories
+As a NUS Student who wants to better manage my time with ease, I want to be able to quickly plan and generate a timetable to better manage my time so as to finish my work on time.
+As a NUS Student, who wants to not worry if I have missed an assignment, I want to be able to have the application remind me when there is a new Assignment up in Canvas or remind me with sufficient time to do my work.
+As a NUS Student, who needs to find time to do group projects with other students , I would like to be able to have the application quickly find the free time for us, streamlining the process.
+As a NUS Student, I would like to find time to study and hang out together with my friends and have the application recommend a timetable for my modules where we are able to spend more time together.
 
-# **Timeline**
-
-1. Milestone 1 - Technical proof of concept (i.e., a minimal working system with both the frontend and the backend integrated for a very simple feature)
-    1. Have a working calendar application that allows for users to add / remove events, and ensure user data is saved between log-ins
-2. Milestone 2 - Prototype (i.e., a working system with the core features)
-    1. Have the calendar automatically add the user’s calendar from CANVAS.
-    2. Develop the algorithm that can arrange the assignments and other events onto the calendar, taking into account their duration and deadlines, and have a separate screen to show the new timetable so as to let the user decide whether to use the suggested timetable.
-3. Milestone 3 - Extended system (i.e., a working system with both the core + extension features)
-    1. Implement a widget extension, allowing users to view their calendar/ To-Do List at a glance
-    2. Have a system to sync with other users' calendars to find common times to meet.
-    3. Refining of UI/UX to improve users experience.
-
-# **Tech Stack**
-
-1. Frontend: React Native
-2. Backend: Express.js
-3. Database: MongoDB
-4. Security: Passportjs
-5. Version Control: Github
-
-# User Stories
-
-[Untitled Database](https://www.notion.so/cbaa942c12d94a958bdcf77c85aaca3b?pvs=21)
-
-# Program Flow
-
-https://documents.lucid.app/documents/6a4d802f-5524-4114-b63e-a684b565fbd3/pages/0_0?a=2590&x=1951&y=805&w=3678&h=2287&store=1&accept=image%2F*&auth=LCA%2060e4b72d20628dbfe424a9478856196d417fc50dc24e6ddf2560258f0cb64eab-ts%3D1717162162
-
-# **Milestone progress/Timeline**
-
-## Milestone 1
-
-**Tasks :** 
-
-- User authentication service
-- Home and Calendar page
-
-**Summary :** 
-
-We created a login and register page to allow users to create an account for the app. The users will be sent to the home page  which currently showcases the current date and in the future, today’s schedule, alerts from CANVAS and add events to the calendar.  There is a navigation bar at the bottom that allows users to navigate to the calendar page which will be able to showcase the events on each day. In the future, the navigation bar will also be able to navigate to the recommended workflow and sync with friends page.
-
-**Hurdles we encountered :** 
-
-Languages : 
-
-- We came into Orbital with no existing knowledge of web frameworks, and wanted to work on something that does not seem too hard to use. Hence, we chose the MERN stack- something that seems doable for us beginners that had no experience with making a fullstack application.
-- We had no experience with React Native , ExpressJs or MongoDB, so we had to pick them up quickly. We did so with the Mission Control workshops and online tutorials.
-
+Milestones
+Milestone 1
+Tasks :
+User authentication service
+Home and Calendar page
+Summary :
+We created a login and register page to allow users to create an account for the app. The users will be sent to the home page which currently showcases the current date and in the future, today’s schedule, alerts from CANVAS and add events to the calendar. There is a navigation bar at the bottom that allows users to navigate to the calendar page which will be able to showcase the events on each day. In the future, the navigation bar will also be able to navigate to the recommended workflow and sync with friends page.
+Hurdles we encountered :
+Languages :
+We came into Orbital with no existing knowledge of web frameworks, and wanted to work on something that does not seem too hard to use. Hence, we chose the MERN stack- something that seems doable for us beginners that had no experience with making a Fullstack application. It is also all in javascript and thus we do not have to swap between different languages, making the work process more streamlined
+We had no experience with React Native , ExpressJs or MongoDB, so we had to pick them up quickly. We did so with the Mission Control workshops and online tutorials.
 Framework:
+React Native Expo updated and they did not do clear and proper documentation for the overhaul, and we had to waste a lot of time looking around the internet to fix the issues that popped up.
+Login System :
+The login system was working fine on the local machine but was extremely buggy and required immediate attention.
+We had to work out the backend logic for the token issuing as it works on some devices but does not always work.
+UI :
+After going through a project consultation of UI/UX, we have a good idea on how our app would look like, and we were able to apply some of the considerations discussed during the consultation when creating the UI.
+However, some aspects of the UI, like the creation of the navigation bar and the design of the calendar was unexpectedly challenging and took us longer than expected to complete. As such, our UI is currently still quite rudimentary due to time constraints and we just wanted to have a simple visual while we work on other aspects of our application.
 
-- React Native Expo updated and they did not do clear and proper documentation for the overhaul, and we had to waste a lot of time looking around the internet to fix the issues that popped up.
+Milestone 2
+Tasks:
+Implementation of Google Sign-Up and Google Calendar Integration
+Changing Backend to firebase and handling FireBase Authentication 
+Addition of Events and syncing with user’s Google Calendar
+Addition of new tabs : Canvas, Recommended Workflow, Sync with friends and Profile featuring basic capabilities
+Summary:
+We have introduced several new tabs in our app, including Canvas, Recommended Workflow, Sync with Friends, and the Profile page. These tabs currently offer foundational capabilities and are still under development. The implementation of the Google API, which includes Google Sign Up and Google Calendar integration, has significantly enhanced our app's functionality. Users can now log in with their Gmail accounts and seamlessly sync their Google Calendar with our app. This integration allows users to add and view events across both platforms, providing a more streamlined experience for managing schedules.
 
-Login System : 
+Challenges:
+Google API:
+Implementing the Google API, which includes Google Sign Up and Google Calendar integration, posed significant challenges. The strict OAuth2 authentication requirements and deprecated features within Expo extended our implementation timeline. Overcoming these hurdles required extensive troubleshooting and adaptation to ensure seamless functionality.
+The restrictions on Google API also caused us to give up on having it work on web and ios due to the library we resorted to using, and now we will only focus on android going forward
+Firebase:
+The decision to migrate to Firebase was driven by the challenges we faced integrating the Google API with Expo for Android. Uncertainties about secure workarounds led us to adopt methods found online, relying on imported modules to manage access tokens and offline functionality effectively. Transitioning to Firebase, a Backend as a Service (BaaS), required a learning curve to fully configure and operationalize, despite its inherent advantages over our previous self-hosted server solution.
+Adding Events Capability:
+During Milestone 2, it was surprisingly a challenge was integrating the 'Add Events' feature with Google Calendar in our app. Implementing the 'Add Events' page, included a date and time picker, and as the date time picker module was a bit weird for the android version and wonky to work with and there was time spent fiddling around with how we implemented it to ensure the data is captured and display appropriately
 
-- The login system was working fine on the local machine but was extremely buggy and required immediate attention.
-- We had to work out the backend logic for the token issuing as it works on  some devices but does not always work.
+Syncing events recorded within our app with Google Calendar also posed challenges. It required much debugging to avoid event duplication and discrepancies between our app and Google Calendar. Additionally, navigating OAuth2 authentication complexities and managing access tokens for secure integration further added to the complexity.
 
-UI : 
+Timeline and Development Plan
 
-- After going through a project consultation of UI/UX, we have a good idea on how our app would look like, and we were able to apply some of the considerations discussed during the consultation when creating the UI.
-- However, some aspects of the UI, like the creation of the navigation bar and the design of the calendar was unexpectedly challenging and took us longer than expected to complete. As such, our UI is currently still quite rudimentary due to time constraints and we just wanted to have a simple visual while we work on other aspects of our application.
+Milestone
+Tasks
+Details
+Date
+1
+Preparation
+Familiarizing with basic technologies:
+- React Native
+- Express.js
+- MongoDB
+- Passportjs
+May 17 - May 25
+Login/Register feature
+Creation of UI for login and register screen, as well as using passport.js for its backend
+May 25 - May 30
+Navigation
+Navigation between all screens as well as a navigation bar at the bottom of the screen to navigate to all screens easily
+May 20 - May 25
+Documentation
+Documenting progress, updating of poster/ video and creation of README
+May 25 - May 31
+Milestone 1 Evaluation:
+Ideation
+Proof of concept:
+Login/Register
+Sidebar navigation
+Home and Calendar Screen
+3 June, 2pm
+2
+Features 
+Adding events to calendar page
+1 Jun - 11 Jun
+Syncing with other users page
+1 Jun - 11 Jun
+CANVAS page
+1 Jun - 11 Jun
+Google Login and Calendar Integration
+1 Jun - 11 Jun
+Profile page
+11 Jun - 20 Jun
+User settings
+11 Jun - 20 Jun
+Unit Testing
+21 Jun - 30 Jun
+Integration Testing
+21 Jun - 30 Jun
+README
+-update design principles
+-system testing
+-Github documentation
+1 Jun - 30 Jun
+Milestone 2 Evaluation: 
+Design: UI/UX design has made significant progress, with core elements implemented. Refinements are ongoing to enhance user experience and visual coherence.
+Prototype: Implemented event saving functionality on the calendar. In progress: Integration for syncing with CANVAS and NUSMods to display assignments, announcements, and timetable. Full implementation of these features is underway to enrich user interaction and utility.
+1 July, 2pm
+3
+Features to be implemented
+Sync With Friends
+ By 3 July (can be done fast) (Gong Yi)
+Canvas Assignment Checker
+By 10 July(Bryan)
+Recommended Time Slots
+By 15 July(Bryan and Gong yi)
+NUS Mod Calendar Adder
+ By 10 July(Gong yi)
+Unit Testing
+To ensure app does not bug out and have unintended consequences
+4- 6 July on the existing things
+User Testing
+Collect feedback on usability, and accessibility of app
+Implement any changes based on feedback
+Start by 15 july
+Unit Testing and Integration Testing
+
+
+Widget feature
+Implement the widget feature if time allows
+If time permits (very very difficult)
+Debugging
+Fix any bugs found during testing
+
+
+Milestone 3 Evaluation:
+Perform system and user testing 
+Full Documentation and deployment of project
+29 July, 2pm
+
+
+Features
+
+Google Login and Google Calendar Integration 
+Description
+Enable users to log in using their Google account credentials and integrate Google Calendar functionality within the app. Users can also add events into their Google calendar on the app with our “add Events” page.
+Implementation Philosophy
+The implementation involves using OAuth2 authentication for secure Google login via Firebase Authentication. Once authenticated, the app accesses Google Calendar API to fetch, add, and update events. Data handling includes storing user tokens securely and managing calendar events with real-time synchronization.
+Fully Implemented:
+Google login functionality allows users to authenticate via their Google accounts.
+Integration with Google Calendar API to fetch and display calendar events within the app.
+Implementation Challenges
+OAuth2 Authentication: Implementing secure OAuth2 flows and handling access tokens securely.
+API Integration: Ensuring proper integration with Google Calendar API endpoints for event management.
+Data Synchronization: Real-time synchronization of calendar events between the app and Google Calendar to maintain consistency.
+Diagrams/Screenshots
+
+
+Home Page
+Description
+The Home Page serves as the central hub, displaying the current date, user's name, upcoming events from Google Calendar, and alerts from CANVAS as well as a button for users to add events quickly. This is to provide users a comprehensive view of their schedule, integrating data from NUSMods for course timetable, CANVAS for assignments, and user-generated events. Ensuring a seamless user experience with intuitive navigation and event management.
+Implementation Philosophy
+Currently, the Home Page successfully renders the current date and user's name using React Native components. The UI design is finalized, setting the template for other tabs. However, integration of today's events from Google Calendar and alerts from CANVAS is in progress. Future implementation will involve fetching data from Google Calendar and CANVAS APIs.
+Implementation Challenges
+Data Integration: Integrating data from multiple sources (NUSMods, CANVAS, user inputs) into a unified calendar view.
+UI: Designing a responsive and visually appealing calendar interface that accommodates various screen sizes.
+Diagrams/Screenshots: 
+
+
+Calendar
+Description
+The Calendar Tab displays the user’s Google Calendar, enabling users to view existing events and add new events. Events added through the app are synchronized with the user’s Google Calendar, accessible across devices.
+Implementation Philosophy
+We developed an 'Add Event' page enabling users to input events into their calendars within our app. Utilizing date and time pickers, users can specify event details seamlessly. Real-time data synchronization ensures that any events added or updated in the app are immediately reflected on the user’s Google Calendar."
+Fully Implemented:
+Display of user’s Google Calendar events within the app.
+Ability to add new events directly to the Google Calendar through the app.
+Real-time synchronization of events between the app and Google Calendar.
+Implementation Challenges
+Date and Time Pickers Compatibility: Integrating compatible date and time pickers across both iOS and Android platforms posed challenges, as some components were not fully compatible with Android versions, requiring additional testing and adjustments.
+Time Transfer to Calendar: Implementing a seamless transfer of event times from the user input to the Google Calendar API involved overcoming technical complexities to avoid discrepancies between app and calendar entries.
+
+
+Diagrams/Screenshots
+
+Canvas Assignment Checker (Incomplete)
+Description
+Automated script to monitor CANVAS for new announcements and assignments, notifying users accordingly.
+Implementation Philosophy
+To enhance user productivity by providing timely notifications for new CANVAS updates. Integration with backend services for real-time data fetching and notification delivery.
+Implementation Challenges
+TBH
+Diagrams/Screenshots
+
+
+Suggested Workflow Feature (Incomplete)
+Description
+Algorithmic recommendation system to organize assignments into a suggested workflow based on deadlines and estimated completion times.
+Implementation Philosophy
+To optimize user time management by suggesting prioritized task sequences. Utilizing machine learning or heuristic algorithms to generate personalized workflows.
+Implementation Challenges
+TBC
+Diagrams/Screenshots: 
+
+
+Mod Choice Bidding Aid (Incomplete)
+Description
+Feature to assist users in arranging mod choice slots for mod bidding, providing recommendations based on user preferences and availability.
+Implementation Philosophy
+To streamline the mod bidding process by offering optimized slot arrangements. Incorporating user preferences, availability data, and historical bidding trends.
+Implementation Challenges
+ TBH 
+Diagrams/Screenshots: 
+
+
+Widget (Incomplete)
+Description
+Widget functionality allows users to view their calendar or to-do list directly from their device’s home screen.
+Implementation Philosophy
+To enhance accessibility and usability by providing quick access to essential app features without launching the full application. Customizable widget options to cater to user preferences.
+Implementation Challenges
+TBH ( High Chance will be scrapped)
+Diagrams/Screenshots: [Include screenshots or diagrams of the widget on the home screen]
+
+Sync With Friend (Incomplete)
+Description
+Feature enabling users to synchronize timetables with friends, facilitating coordination for group projects or study sessions.
+Implementation Philosophy
+To foster collaboration and time management among users by identifying common free timings. Implementing user search functionality and real-time synchronization algorithms.
+Implementation Challenges
+Designing a secure and user-friendly interface for linking and syncing timetables between users.
+Implementing efficient algorithms to identify and display common free time slots.
+Handling privacy concerns and ensuring user consent and data security measures.
+Diagrams/Screenshots: 
+[Include any relevant interface mockups or flow diagrams]
+
+Instructions on how to access the application (Only Available for Android):
+
+Download the Development build with the following link:
+https://expo.dev/accounts/diomon/projects/TaskMaster/builds/f25ae30e-378d-46b4-b387-91c36e8a4582 Click the blue install icon to download the apk and just install it on to your device (Needed due to libraries not supported by expo by default )
+
+Click on this link and run it under development Build:
+https://expo.dev/preview/update?message=MileStone2&updateRuntimeVersion=1.0.0&createdAt=2024-06-30T15%3A41%3A22.361Z&slug=TaskMaster&projectId=a19afe2a-7aa8-4f75-b19c-64c121b9b2a9&group=572c7382-637e-4ae5-843c-b375aefee680
+Run it under development build
+Note: Due to the Application being unverified, only selected test users can use the application. We have prepared a test google account for you to use.
+Gmail: taskmastertest27@gmail.com
+PW: .taskMaster69420!
+
+Poster: 6343.png
+Github Repo: https://github.com/EyuGongYi/TaskMaster
+Project Log: Project Log

@@ -1,12 +1,11 @@
 import { auth } from "@/firebaseConfig";
 import { createUserCalendar, setOfflineToken } from "@/scripts/googleApi";
-import { EventList, Events, GoogleEventType } from "@/types/event";
+import { Events } from "@/types/event";
 import User from "@/types/user";
-import { GetTokensResponse, GoogleSignin } from "@react-native-google-signin/google-signin";
+import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { router, useRootNavigationState, useSegments } from "expo-router";
 import { onAuthStateChanged, signOut } from "firebase/auth";
 import React, { createContext, useContext, useEffect, useState } from "react";
-
 
 // Initial Variable States
 const initialState = {
@@ -47,7 +46,6 @@ export function useAuth():ContextInterface {
     if (context == undefined) {
         throw new Error("useAuth must be used within a Provider");
     }
-
     return context;
 }
 

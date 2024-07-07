@@ -1,12 +1,13 @@
 import { View, Text, StyleSheet, Pressable, SafeAreaView } from 'react-native'
 import React from 'react'
 import { getCalendarEvents } from '@/scripts/googleApi';
+import { auth } from '@/firebaseConfig';
 
 
 export default function index() {
-    
     const handleLogin = async () => {
-        console.log(await getCalendarEvents());
+      const token = await auth.currentUser!.getIdToken();
+        console.log(token);
     };
 
     return (

@@ -33,7 +33,7 @@ export default function index() {
         items= {
           eventList
         }
-        renderItem={(item, isFirst) => (
+        renderItem={(item:any, isFirst:any) => (
           <Pressable style={styles.item} onPress={() => {console.log(eventList)}}>
             <Text style={styles.itemText}>{item.name}</Text>
             <Text style={styles.itemText}>{item.day}</Text>

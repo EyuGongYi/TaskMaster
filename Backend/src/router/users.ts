@@ -1,14 +1,12 @@
 import { Router } from "express";
-import { getUserByUsername, getUserUsername, setUserUsername } from "../handler/users";
+import { getUserByUsername} from "../handler/users";
 import passport from "passport";
+import { verifyToken } from "../strategies/firebase";
 
 const userRouter = Router();
 
-userRouter.use(passport.authenticate("jwt"));
+userRouter.use(verifyToken);
 
-// /api/users/username
-userRouter.get("/username", getUserUsername);
-userRouter.post("/username", setUserUsername);
 // /api/users/123
 userRouter.get("/:username", getUserByUsername);
 

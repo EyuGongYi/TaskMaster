@@ -1,14 +1,10 @@
 import "dotenv/config";
 import express from "express";
 import userRouter from "./router/users";
-import authRouter from "./router/auth";
-import passport from "passport";
-import "./strategies/local";
-import "./strategies/jwt";
-import "dotenv/config";
 import cors from "cors";
 import session from "express-session";
 import MongoStore from "connect-mongo";
+import * as Admin from "firebase-admin";
 
 declare module "express-session" {
     interface SessionData {
@@ -18,7 +14,10 @@ declare module "express-session" {
 
 // Creates a Express Application
 export function createApp() {
-    
+    const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT!);
+    Admin.initializeApp({
+        credential: Admin.credential.cert(serviceAccount)
+    });
     // Init Application
     const app = express();
     app.use(cors());
@@ -28,7 +27,6 @@ export function createApp() {
     app.use(express.json());
     app.use(express.urlencoded({extended: true}));
     
-    app.use(passport.initialize());
     app.use(session(
         {
             secret: process.env.SESSION_SECRET ||"ADD ur secret into .env",
@@ -43,7 +41,6 @@ export function createApp() {
     
     //Registering of routers
     app.use("/api/users", userRouter);
-    app.use("/api/auth", authRouter);
 
     return app;
 }

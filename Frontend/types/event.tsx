@@ -11,12 +11,15 @@ export type EventList = {
 };
 
 export type GoogleEventType = {
-    eventId: string;
-    eventName: string;
-    eventDetail: string;
-    eventStart: Date;
-    eventEnd: Date;
-    eventDate: Date;
+  eventId: string;
+  eventName: string;
+  eventDetail: string;
+  eventStart?: Date;
+  eventEnd?: Date;
+  eventDate?: Date;
+  priority?: 'Low' | 'Medium' | 'High' | 'ASAP';
+  deadline?: Date;
+  eventDuration?: number;
 };
 
 export interface Events{

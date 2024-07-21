@@ -1,5 +1,6 @@
-import { View, Text, StyleSheet, Pressable } from 'react-native'
-import React, { useEffect } from 'react'
+// calendar.tsx
+import { View, Text, StyleSheet, Pressable } from 'react-native';
+import React, { useEffect } from 'react';
 import { router } from 'expo-router';
 import { Agenda, AgendaEntry } from 'react-native-calendars';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -7,47 +8,58 @@ import { useAuth } from '@/hooks/authContext';
 import { Events, GoogleEventType } from '@/types/event';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
-export const getEvents = async (setEventList: Function) => {
+export const getEvents = async (setEventList?: Function): Promise<GoogleEventType[]> => {
   const temp = await AsyncStorage.getItem("events");
-  const event: Array<GoogleEventType> = temp ? JSON.parse(temp): [];
+  const event: Array<GoogleEventType> = temp ? JSON.parse(temp) : [];
+
   const res: Events = event.reduce((acc: any, event: any) => {
-    const date = event.eventDate.split("T")[0];
-    if (!acc[date]) {
-      acc[date] = [];
+    if (event && event.eventDate) {
+      const date = event.eventDate.split("T")[0];
+      if (!acc[date]) {
+        acc[date] = [];
+      }
+      acc[date].push({
+        name: event.eventName,
+        height: event.eventDetail,
+        start: event.eventStart,
+        end: event.eventEnd,
+      });
     }
-    acc[date].push({name: event.eventName, height: event.eventDetail, day: `Deadline: ${new Date(event.eventEnd).toDateString()}`});
     return acc;
   }, {} as Events) || {};
-  console.log(event);
-  setEventList(res);
-}
+
+  if (setEventList) {
+    setEventList(res);
+  }
+
+  return event; // Return the raw list of events
+};
 
 export default function index() {
-  const {eventList, setEventList} = useAuth();
+  const { eventList, setEventList } = useAuth();
   
-  useEffect(() => {getEvents(setEventList)}, []);
+  useEffect(() => { getEvents(setEventList) }, []);
 
   return (
     <SafeAreaView style={styles.container}>
       <Agenda
-        items= {
-          eventList
-        }
-        renderItem={(item, isFirst) => (
-          <Pressable style={styles.item} onPress={() => {console.log(eventList)}}>
+        items={eventList}
+        renderItem={(item: any, isFirst: boolean) => (
+          <Pressable style={styles.item} onPress={() => { console.log(eventList) }}>
             <Text style={styles.itemText}>{item.name}</Text>
-            <Text style={styles.itemText}>{item.day}</Text>
+            <Text style={styles.itemText}>
+              {new Date(item.start).toLocaleTimeString()} - {new Date(item.end).toLocaleTimeString()}
+            </Text>
           </Pressable>
         )}
       />
       <View style={styles.addEventButton}>
-        <Pressable  onPress={() => {router.push("/addEvent")}}>
+        <Pressable onPress={() => { router.push("/addEvent") }}>
           <Text style={styles.addEvent}>+</Text>
         </Pressable>
       </View>
-        
-      </SafeAreaView>
-  )
+    </SafeAreaView>
+  );
 }
 
 const styles = StyleSheet.create({
@@ -55,7 +67,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   item: {
-    flex:1,
+    flex: 1,
     backgroundColor: "skyblue",
     borderRadius: 15,
     padding: 10,
@@ -90,3 +102,4 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 });
+

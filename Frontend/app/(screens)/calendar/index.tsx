@@ -5,27 +5,26 @@ import { Agenda, AgendaEntry } from 'react-native-calendars';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '@/hooks/authContext';
 import { Events, GoogleEventType } from '@/types/event';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getCalendarEvents } from '@/scripts/googleApi';
+import User from '@/types/user';
 
-export const getEvents = async (setEventList: Function) => {
-  const temp = await AsyncStorage.getItem("events");
-  const event: Array<GoogleEventType> = temp ? JSON.parse(temp): [];
+export const getEvents = async (setEventList: Function, user: User) => {
+  const event:any[] = await getCalendarEvents(user!);
   const res: Events = event.reduce((acc: any, event: any) => {
-    const date = event.eventDate.split("T")[0];
+    const date = event.start.dateTime.split("T")[0];
     if (!acc[date]) {
       acc[date] = [];
     }
-    acc[date].push({name: event.eventName, height: event.eventDetail, day: `Deadline: ${new Date(event.eventEnd).toDateString()}`});
+    acc[date].push({name: event.summary, height: event.description, day: `Deadline: ${new Date(event.end.dateTime).toDateString()}`});
     return acc;
   }, {} as Events) || {};
-  console.log(event);
   setEventList(res);
 }
 
 export default function index() {
-  const {eventList, setEventList} = useAuth();
+  const {user, eventList, setEventList} = useAuth();
   
-  useEffect(() => {getEvents(setEventList)}, []);
+  useEffect(() => {getEvents(setEventList, user!)}, []);
 
   return (
     <SafeAreaView style={styles.container}>

@@ -22,3 +22,8 @@ export type GoogleEventType = {
 export interface Events{
     [date: string] : AgendaEntry[];
   }
+
+export interface Interval {
+    start: string; // ISO format
+    end: string;   // ISO format
+}

@@ -15,12 +15,15 @@ const initialState = {
     email: "",
     createdAt: "",
     lastLoginAt: "",
+    photoURL: "",
 }
 
 
 // For creating  Context
 interface ContextInterface {
     user: User | null;
+    chosenList: User[],
+    setChosenList: React.Dispatch<React.SetStateAction<any[]>>;
     eventList: Events | undefined,
     setEventList: React.Dispatch<React.SetStateAction<Events| undefined>>;
     signIn: React.Dispatch<React.SetStateAction<User>>;
@@ -30,7 +33,9 @@ interface ContextInterface {
 //Initial Context States
 const contextDefaultState: ContextInterface = {
     user: initialState,
+    chosenList: [],
     eventList: {},
+    setChosenList: () => {},
     setEventList: () => {},
     signIn: () => {},
     signOut: () => {},
@@ -76,6 +81,7 @@ function userProtectedRoute(user: User) {
 //Provider
 export function AuthProvider({children}: React.PropsWithChildren):JSX.Element {
     const [user, setUser] = useState<User>(initialState);
+    const [chosenList, setChosenList] = useState<any[]>([]);
     const [eventList, setEventList] = useState<Events>();
 
     userProtectedRoute(user);
@@ -90,11 +96,9 @@ export function AuthProvider({children}: React.PropsWithChildren):JSX.Element {
                     email: user.providerData[0].email! ,
                     createdAt: user.metadata.creationTime!,
                     lastLoginAt: user.metadata.creationTime!,
+                    photoURL: user.photoURL!,
                 };
                 setUser(userData);
-                await GoogleSignin.signInSilently();
-                createUserCalendar(userData);
-                setOfflineToken(userData);
                 router.replace("/(screens)");
             } else {
                 console.log("User is not authenticated");
@@ -109,6 +113,8 @@ export function AuthProvider({children}: React.PropsWithChildren):JSX.Element {
             value={{
                 user,
                 eventList,
+                chosenList,
+                setChosenList: setChosenList,
                 setEventList: setEventList,
                 signIn: setUser,
                 signOut: () => {

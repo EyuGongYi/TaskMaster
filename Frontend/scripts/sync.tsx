@@ -8,5 +8,5 @@ export async function getUsers(query: string | string[] | undefined) {
             Authorization: `Bearer ${await auth.currentUser!.getIdToken()}`,
         },
     });
-    console.log(await res.json());
+    return res.json();
 }

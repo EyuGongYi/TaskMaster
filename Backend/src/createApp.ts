@@ -5,6 +5,7 @@ import cors from "cors";
 import session from "express-session";
 import MongoStore from "connect-mongo";
 import * as Admin from "firebase-admin";
+import bodyParser from "body-parser";
 
 declare module "express-session" {
     interface SessionData {
@@ -16,7 +17,7 @@ declare module "express-session" {
 export function createApp() {
     const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT!);
     Admin.initializeApp({
-        credential: Admin.credential.cert(serviceAccount)
+        credential: Admin.credential.cert(serviceAccount),
     });
     // Init Application
     const app = express();
@@ -25,6 +26,7 @@ export function createApp() {
     //Middlewares
     // allow receiving of json (Middleware)
     app.use(express.json());
+    app.use(bodyParser.json());
     app.use(express.urlencoded({extended: true}));
     
     app.use(session(

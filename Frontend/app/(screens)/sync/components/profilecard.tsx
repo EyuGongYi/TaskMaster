@@ -4,19 +4,23 @@ import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import React from 'react';
 import { StyleSheet, View, Image, Text, Pressable } from 'react-native';
 import User from "@/types/user";
+import { useAuth } from '@/hooks/authContext';
 
-function handleProfileButton(user: User) {
-    console.log(user);
-}
 
-export default function ProfileCard(user: User) {
-    const image = GoogleSignin.getCurrentUser()!.user.photo;
+
+export default function ProfileCard(user: User, key : React.Key) {
+  const {chosenList} = useAuth();
+  function handleProfileButton(user: User) {
+    if (chosenList.findIndex(temp => temp.uid == user.uid) == -1) {
+      chosenList.push(user);
+    }
+  }
   return (
-        <Pressable style={styles.profile} onPress={() => {handleProfileButton(user)}}>
+        <Pressable key={key} style={styles.profile} onPress={() => {handleProfileButton(user)}}>
           <Image
             alt=""
             source={{
-              uri:image!
+              uri:user.photoURL!
             }}
             style={styles.profileAvatar} />
 

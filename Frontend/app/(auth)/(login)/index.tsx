@@ -1,17 +1,21 @@
 import React, { useEffect } from 'react';
 import { View, StyleSheet, Text} from 'react-native';
-import {GoogleSignin, GoogleSigninButton } from "@react-native-google-signin/google-signin";
+import {GoogleSignin, GoogleSigninButton, User } from "@react-native-google-signin/google-signin";
 import { auth } from '@/firebaseConfig';
-import { GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
+import { GoogleAuthProvider, signInWithCredential, updateProfile } from 'firebase/auth';
+import { createUserCalendar, setOfflineToken } from '@/scripts/googleApi';
 import { useAuth } from '@/hooks/authContext';
 
+
+
 const LoginScreen = () => {
-  const {user,signOut, setTokens} = useAuth();
+  const {user} = useAuth();
   useEffect(() => {
     GoogleSignin.configure({
       webClientId: process.env.EXPO_PUBLIC_WEB_CLIENT_ID,
       offlineAccess: true,
       scopes: [`https://www.googleapis.com/auth/calendar`],
+      forceCodeForRefreshToken:true,
     });
   },[]); 
   
@@ -19,8 +23,13 @@ const LoginScreen = () => {
   const handleSignIn = async () => {
     try {
       await GoogleSignin.hasPlayServices();
-      const user = await GoogleSignin.signIn();
-      await signInWithCredential(auth, GoogleAuthProvider.credential(user.idToken));
+      const User = await GoogleSignin.signIn();
+      await signInWithCredential(auth, GoogleAuthProvider.credential(User.idToken));
+      updateProfile(auth.currentUser!, {photoURL: GoogleSignin.getCurrentUser()!.user.photo})
+      .then(() => console.log("updated"))
+      .catch(e => console.log(e));
+      await createUserCalendar(auth.currentUser!);
+      await setOfflineToken(auth.currentUser!.providerData[0].uid);
     } catch (e) {
       console.log(e);
     }

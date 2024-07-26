@@ -1,36 +1,32 @@
-import { View, Text, StyleSheet, Pressable, TextInput } from 'react-native'
-import React, { useState } from 'react'
+import React from 'react';
+import { View, Text, StyleSheet, Pressable, Alert } from 'react-native';
+import { authorize } from 'react-native-app-auth';
 import { router } from 'expo-router';
+import * as Keychain from 'react-native-keychain';
+import { moodleConfig } from '@/app/moodleApi';
 
-
-export default function index() {
-  const [username, setUsername] = useState<string>();
-  const [password, setPassword] = useState<string>();
-  const handleLogin = () => {
-    // login to moodle to get usertoken, if successful set auth state to true
-    router.replace("/(screens)/canvas/canvasPage");
+const LoginPage: React.FC = () => {
+  const handleLogin = async () => {
+    try {
+      const authState = await authorize(moodleConfig);
+      await Keychain.setGenericPassword('token', authState.accessToken);
+      router.replace("/canvasPage");
+    } catch (error) {
+      Alert.alert('Login Error', 'Failed to authenticate with Moodle.');
+      console.error('Authentication error:', error);
+    }
   };
 
   return (
     <View style={styles.container}>
-      <TextInput
-            placeholder="Username"
-            value={username}
-            onChangeText={text => setUsername(text)}
-            style={styles.input}
-        />
-      <TextInput
-            placeholder="Password"
-            value={password}
-            onChangeText={text => setPassword(text)}
-            style={styles.input}
-        />
       <Pressable onPress={handleLogin}>
-        <Text style={styles.loginButton}>Canvas Login</Text>
+        <Text style={styles.loginButton}>Login with Moodle</Text>
       </Pressable>
     </View>
-  )
-}
+  );
+};
+
+export default LoginPage;
 
 const styles = StyleSheet.create({
   container: {

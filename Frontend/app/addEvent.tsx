@@ -19,6 +19,8 @@ export default function AddEventScreen() {
   const {user} = useAuth();
 
   const saveEvent = async () => {
+    // routed back to prevent event being saved mulitple times
+    router.back();
     if (!eventName || !eventStart || !eventEnd || !eventDate) {
       alert('Please enter all fields');
       return;
@@ -33,19 +35,12 @@ export default function AddEventScreen() {
       alert("Creation of Event failed");
       return;
     }
-    console.log("created");
-    console.log(googleEvent);
-    // Update events state to include the new event
-    const temp = await AsyncStorage.getItem("events");
-    const updatedEvents = temp ? [...JSON.parse(temp), googleEvent]: [googleEvent];
-    await AsyncStorage.setItem("events", JSON.stringify(updatedEvents));
     // Clear input fields after saving
     setEventName('');
     setEventStart(undefined);
     setEventDate(undefined);
     setEventEnd(undefined);
     setEventDetail("");
-    router.back();
     };
 
     //Handles all the Input On Change

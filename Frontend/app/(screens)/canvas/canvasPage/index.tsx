@@ -38,16 +38,6 @@ const CanvasPage: React.FC = () => {
   const onRefresh = useCallback(() => {
     handleFetchDetails();
   }, []);
-import { View, Text, StyleSheet, Pressable, SafeAreaView } from 'react-native'
-import React from 'react'
-import { getCalendarEvents } from '@/scripts/googleApi';
-import { auth } from '@/firebaseConfig';
-
-
-export default function index() {
-    const handleLogin = async () => {
-      
-    };
 
   return (
     <SafeAreaView style={styles.container}>

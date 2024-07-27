@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
-import { getEvents } from "../../calendar"; 
+import { getCalendarEvents } from '@/scripts/googleApi';
 import { GoogleEventType, Events } from "@/types/event"; 
 
 const TodaySchedule = () => {
@@ -8,7 +8,23 @@ const TodaySchedule = () => {
 
   useEffect(() => {
     const fetchAndSetEvents = async () => {
-      await getEvents(setEventList);
+      const events: GoogleEventType[] = await getCalendarEvents();
+      const formattedEvents: Events = events.reduce((acc: any, event: any) => {
+        if (event && event.start.dateTime) {
+          const date = new Date(event.start.dateTime).toISOString().split("T")[0];
+          if (!acc[date]) {
+            acc[date] = [];
+          }
+          acc[date].push({
+            name: event.summary,
+            height: event.description,
+            start: new Date(event.start.dateTime),
+            end: new Date(event.end.dateTime),
+          });
+        }
+        return acc;
+      }, {} as Events);
+      setEventList(formattedEvents);
     };
 
     fetchAndSetEvents();

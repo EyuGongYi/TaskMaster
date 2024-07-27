@@ -1,44 +1,39 @@
-// calendar.tsx
 import { View, Text, StyleSheet, Pressable } from 'react-native';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { router } from 'expo-router';
 import { Agenda, AgendaEntry } from 'react-native-calendars';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '@/hooks/authContext';
 import { Events, GoogleEventType } from '@/types/event';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import { getCalendarEvents } from '@/scripts/googleApi';
 
-export const getEvents = async (setEventList?: Function): Promise<GoogleEventType[]> => {
-  const temp = await AsyncStorage.getItem("events");
-  const event: Array<GoogleEventType> = temp ? JSON.parse(temp) : [];
-
-  const res: Events = event.reduce((acc: any, event: any) => {
-    if (event && event.eventDate) {
-      const date = event.eventDate.split("T")[0];
+const fetchEvents = async (setEventList: Function) => {
+  const events = await getCalendarEvents();
+  const formattedEvents: Events = events.reduce((acc: any, event: any) => {
+    if (event && event.start.dateTime) {
+      const date = new Date(event.start.dateTime).toISOString().split("T")[0];
       if (!acc[date]) {
         acc[date] = [];
       }
       acc[date].push({
-        name: event.eventName,
-        height: event.eventDetail,
-        start: event.eventStart,
-        end: event.eventEnd,
+        name: event.summary,
+        height: event.description,
+        start: new Date(event.start.dateTime),
+        end: new Date(event.end.dateTime),
       });
     }
     return acc;
-  }, {} as Events) || {};
+  }, {} as Events);
 
-  if (setEventList) {
-    setEventList(res);
-  }
-
-  return event; // Return the raw list of events
+  setEventList(formattedEvents);
 };
 
-export default function index() {
+export default function CalendarScreen() {
   const { eventList, setEventList } = useAuth();
-  
-  useEffect(() => { getEvents(setEventList) }, []);
+
+  useEffect(() => {
+    fetchEvents(setEventList);
+  }, []);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -48,7 +43,7 @@ export default function index() {
           <Pressable style={styles.item} onPress={() => { console.log(eventList) }}>
             <Text style={styles.itemText}>{item.name}</Text>
             <Text style={styles.itemText}>
-              {new Date(item.start).toLocaleTimeString()} - {new Date(item.end).toLocaleTimeString()}
+              {item.start ? new Date(item.start).toLocaleTimeString() : ''} - {item.end ? new Date(item.end).toLocaleTimeString() : ''}
             </Text>
           </Pressable>
         )}
@@ -102,4 +97,3 @@ const styles = StyleSheet.create({
     textAlign: "center",
   },
 });
-

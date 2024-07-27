@@ -1,177 +1,293 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Pressable, ScrollView } from 'react-native';
+import React, { useState } from 'react';
+import { View, Text, TextInput, StyleSheet, Pressable } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
+import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { GoogleEventType } from '@/types/event';
+import { router } from 'expo-router';
+import { createGoogleEvent } from '@/scripts/googleApi';
 import { useAuth } from '@/hooks/authContext';
-import { getEvents } from '../calendar';
 
-const getEventsWithoutDates = async (): Promise<GoogleEventType[]> => {
-  const allEvents: Array<GoogleEventType> = await getEvents(); // Get all events using the getEvents function
-  console.log(allEvents);
-  return allEvents.filter(event => !event.eventDate && event.priority);
-};
-
-const findEarliestFreeTime = (events: GoogleEventType[], duration: number, deadline?: Date): { start: Date, end: Date } | null => {
-  const now = new Date();
-  const endDate = deadline ? new Date(deadline) : new Date(now.getFullYear() + 1, now.getMonth(), now.getDate()); // default to 1 year ahead if no deadline
-
-  for (let date = new Date(now); date <= endDate; date.setDate(date.getDate() + 1)) {
-    let freeTimeSlots = [
-      { start: new Date(date.setHours(8, 0, 0, 0)), end: new Date(date.setHours(20, 0, 0, 0)) }, // find free timings from 8 AM to 8 PM
-    ];
-
-    // Sort events by start time
-    const dayEvents = events
-      .filter(event => event.eventDate && new Date(event.eventDate).toDateString() === date.toDateString())
-      .sort((a, b) => new Date(a.eventStart!).getTime() - new Date(b.eventStart!).getTime());
-
-    for (const event of dayEvents) {
-      const eventStart = new Date(event.eventStart!);
-      const eventEnd = new Date(event.eventEnd!);
-      freeTimeSlots = freeTimeSlots.reduce((acc, slot) => {
-        if (eventEnd <= slot.start || eventStart >= slot.end) {
-          // No overlap
-          acc.push(slot);
-        } else if (eventStart > slot.start && eventEnd < slot.end) {
-          // Event splits the slot into two
-          acc.push({ start: slot.start, end: eventStart });
-          acc.push({ start: eventEnd, end: slot.end });
-        } else if (eventStart <= slot.start && eventEnd >= slot.end) {
-          // Event completely overlaps the slot
-        } else if (eventStart <= slot.start && eventEnd < slot.end) {
-          // Event overlaps the start of the slot
-          acc.push({ start: eventEnd, end: slot.end });
-        } else if (eventStart > slot.start && eventEnd >= slot.end) {
-          // Event overlaps the end of the slot
-          acc.push({ start: slot.start, end: eventStart });
-        }
-        return acc;
-      }, [] as Array<{ start: Date, end: Date }>);
-    }
-
-    const availableSlot = freeTimeSlots.find(slot => slot.end.getTime() - slot.start.getTime() >= duration * 60000);
-    if (availableSlot) {
-      return { start: availableSlot.start, end: new Date(availableSlot.start.getTime() + duration * 60000) };
-    }
-  }
-
-  return null; // No available slot found within the deadline
-};
-
-const RecommendationPage: React.FC = () => {
-  const [eventsWithoutDates, setEventsWithoutDates] = useState<GoogleEventType[]>([]);
+export default function AddEventScreen() {
+  const [eventName, setEventName] = useState('');
+  const [eventDate, setEventDate] = useState<Date>();
+  const [eventStart, setEventStart] = useState<Date>();
+  const [eventEnd, setEventEnd] = useState<Date>();
+  const [eventDuration, setEventDuration] = useState<number>();
+  const [eventDetail, setEventDetail] = useState('');
+  const [priority, setPriority] = useState<'Low' | 'Medium' | 'High' | 'ASAP'>();
+  const [deadline, setDeadline] = useState<Date>();
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [showStartTimePicker, setShowStartTimePicker] = useState(false);
+  const [showEndTimePicker, setShowEndTimePicker] = useState(false);
+  const [showDeadlinePicker, setShowDeadlinePicker] = useState(false);
   const { user } = useAuth();
 
-  useEffect(() => {
-    const loadEvents = async () => {
-      const events = await getEventsWithoutDates();
-      events.sort((a, b) => {
-        const priorityOrder = ['ASAP', 'High', 'Medium', 'Low'];
-        return priorityOrder.indexOf(a.priority!) - priorityOrder.indexOf(b.priority!);
-      });
-      setEventsWithoutDates(events);
-    };
+  const saveEvent = async () => {
+    if (!eventName) {
+      alert('Please enter the event name');
+      return;
+    }
+    if (!eventStart && !eventEnd && !priority) {
+      alert('Please set a priority if no timings are provided');
+      return;
+    }
+    if (!eventStart && !eventEnd && !eventDuration) {
+      alert('Please set a duration if no start and end time are provided');
+      return;
+    }
+    if (eventEnd && eventStart && eventEnd < eventStart) {
+      alert("End timing is before the start timing");
+      return;
+    }
+    
+    let googleEvent: GoogleEventType | null = null;
+    if (eventDate && eventStart && eventEnd) {
+      googleEvent = await createGoogleEvent(user!, eventName, eventStart, eventEnd, eventDetail);
+      if (!googleEvent) {
+        alert("Creation of Event failed");
+        return;
+      }
+      googleEvent.priority = priority;
+      googleEvent.deadline = deadline;
+    } else {
+      const asyncEvent: GoogleEventType = {
+        eventId: Math.random().toString(36).slice(2, 9),
+        eventName,
+        eventDetail,
+        priority,
+        eventDate,
+        eventStart,
+        eventEnd,
+        deadline,
+        eventDuration,
+      };
 
-    loadEvents();
-  }, []);
+      const temp = await AsyncStorage.getItem("events");
+      const updatedEvents = temp ? [...JSON.parse(temp), asyncEvent] : [asyncEvent];
+      await AsyncStorage.setItem("events", JSON.stringify(updatedEvents));
+    }
 
-  const handleAcceptSuggestion = async (event: GoogleEventType, suggestedDate: { start: Date, end: Date }) => {
-    event.eventDate = suggestedDate.start;
-    event.eventStart = suggestedDate.start;
-    event.eventEnd = suggestedDate.end;
-
-    // Update the event list in AsyncStorage
-    const temp = await AsyncStorage.getItem("events");
-    const events: GoogleEventType[] = temp ? JSON.parse(temp).filter((e: any) => e !== null && e !== undefined).map((e: any) => ({
-      ...e,
-      eventStart: e.eventStart ? new Date(e.eventStart) : undefined,
-      eventEnd: e.eventEnd ? new Date(e.eventEnd) : undefined,
-      eventDate: e.eventDate ? new Date(e.eventDate) : undefined,
-      deadline: e.deadline ? new Date(e.deadline) : undefined,
-    })) : [];
-    const updatedEvents = events.map(e => e.eventId === event.eventId ? event : e);
-    await AsyncStorage.setItem("events", JSON.stringify(updatedEvents));
-
-    // Refresh the list
-    setEventsWithoutDates(updatedEvents.filter(e => !e.eventDate));
+    setEventName('');
+    setEventStart(undefined);
+    setEventDate(undefined);
+    setEventEnd(undefined);
+    setEventDetail("");
+    setPriority(undefined);
+    setDeadline(undefined);
+    setEventDuration(undefined);
+    router.back();
   };
 
-  return (
-    <ScrollView style={styles.container}>
-      <Text style={styles.header}>Recommendations</Text>
-      {eventsWithoutDates.length > 0 ? (
-        eventsWithoutDates.map((event, index) => {
-          const suggestedDate = findEarliestFreeTime(eventsWithoutDates, event.eventDuration || 60, event.deadline); // Default to 1 hour if no duration provided
-          if (!suggestedDate) {
-            return (
-              <View key={index} style={styles.eventContainer}>
-                <Text style={styles.eventName}>{event.eventName}</Text>
-                <Text>No suitable time slot found before the deadline.</Text>
-                <Pressable style={styles.button} onPress={async () => {
-                  // Delete event if no time slot found
-                  const temp = await AsyncStorage.getItem("events");
-                  const events: GoogleEventType[] = temp ? JSON.parse(temp) : [];
-                  const updatedEvents = events.filter(e => e.eventId !== event.eventId);
-                  await AsyncStorage.setItem("events", JSON.stringify(updatedEvents));
-                  setEventsWithoutDates(updatedEvents.filter(e => !e.eventDate));
-                }}>
-                  <Text style={styles.buttonText}>Delete Event</Text>
-                </Pressable>
-              </View>
-            );
-          }
-          return (
-            <View key={index} style={styles.eventContainer}>
-              <Text style={styles.eventName}>{event.eventName}</Text>
-              <Text>Suggested Date: {suggestedDate.start.toDateString()}</Text>
-              <Text>Suggested Start Time: {suggestedDate.start.toTimeString()}</Text>
-              <Text>Suggested End Time: {suggestedDate.end.toTimeString()}</Text>
-              <Text>Priority: {event.priority}</Text>
-              <Text>Details: {event.eventDetail}</Text>
-              <Pressable style={styles.button} onPress={() => handleAcceptSuggestion(event, suggestedDate)}>
-                <Text style={styles.buttonText}>Accept Suggestion</Text>
-              </Pressable>
-            </View>
-          );
-        })
-      ) : (
-        <Text>No events without dates</Text>
-      )}
-    </ScrollView>
-  );
-};
+  const onChangeDate = (event: DateTimePickerEvent, selectedDate?: Date) => {
+    const currentDate = selectedDate ? selectedDate : eventDate;
+    setShowDatePicker(false);
+    setEventDate(currentDate);
+    if (eventStart) {
+      eventStart.setDate(currentDate!.getDate());
+    }
+    if (eventEnd) {
+      eventEnd.setDate(currentDate!.getDate());
+    }
+  };
 
-export default RecommendationPage;
+  const onChangeStartTime = (event: DateTimePickerEvent, selectedTime?: Date) => {
+    const currentTime = selectedTime ? selectedTime : eventStart;
+    setShowStartTimePicker(false);
+    if (currentTime && eventDate) {
+      currentTime.setDate(eventDate.getDate());
+    }
+    setEventStart(currentTime);
+  };
+
+  const onChangeEndTime = (event: DateTimePickerEvent, selectedTime?: Date) => {
+    const currentTime = selectedTime ? selectedTime : eventEnd;
+    setShowEndTimePicker(false);
+    if (currentTime && eventDate) {
+      currentTime.setDate(eventDate.getDate());
+    }
+    setEventEnd(currentTime);
+  };
+
+  const onChangeDeadline = (event: DateTimePickerEvent, selectedDate?: Date) => {
+    const currentDate = selectedDate ? selectedDate : deadline;
+    setShowDeadlinePicker(false);
+    setDeadline(currentDate);
+  };
+
+  const displayStart = eventStart;
+  const displayEnd = eventEnd;
+
+  return (
+    <View style={styles.container}>
+      <Text style={styles.text}>Add Event</Text>
+      <TextInput
+        placeholder="Event Name"
+        value={eventName}
+        onChangeText={text => setEventName(text)}
+        style={styles.input}
+      />
+
+      <Text style={styles.text}>Details</Text>
+      <TextInput
+        placeholder="Details"
+        value={eventDetail}
+        onChangeText={text => setEventDetail(text)}
+        style={styles.input}
+      />
+
+      <Text style={styles.text}>Priority (Optional if timings are provided)</Text>
+      <View style={styles.pickerContainer}>
+        <Picker
+          selectedValue={priority}
+          onValueChange={(itemValue) => setPriority(itemValue as 'Low' | 'Medium' | 'High' | 'ASAP')}
+          style={styles.picker}
+        >
+          <Picker.Item label="Select Priority" value={null} />
+          <Picker.Item label="Low" value="Low" />
+          <Picker.Item label="Medium" value="Medium" />
+          <Picker.Item label="High" value="High" />
+          <Picker.Item label="ASAP" value="ASAP" />
+        </Picker>
+      </View>
+
+      <Text style={styles.text}>Duration (Minutes) (Optional if timings are provided)</Text>
+      <TextInput
+        placeholder="Event Duration"
+        value={eventDuration ? eventDuration.toString() : ''}
+        onChangeText={text => setEventDuration(parseInt(text))}
+        style={styles.input}
+        keyboardType="numeric"
+      />
+
+      {eventDate ? <Text style={styles.text}>{eventDate.toISOString().split("T")[0]}</Text> : <Text style={styles.text}>Date</Text>}
+      <Pressable style={styles.button} onPress={() => setShowDatePicker(true)}>
+        <Text style={styles.buttonText}>Select Date</Text>
+      </Pressable>
+      {showDatePicker && (
+        <DateTimePicker
+          value={eventDate ? new Date(eventDate) : new Date()}
+          mode="date"
+          display="default"
+          onChange={onChangeDate}
+        />
+      )}
+
+      {displayStart ? <Text style={styles.text}>{displayStart.getHours() + ":" + displayStart.getMinutes()}</Text> : <Text style={styles.text}>Start Time</Text>}
+      <Pressable style={styles.button} onPress={() => setShowStartTimePicker(true)}>
+        <Text style={styles.buttonText}>Select Start Time</Text>
+      </Pressable>
+      {showStartTimePicker && eventDate && (
+        <DateTimePicker
+          value={eventStart ? eventStart : new Date()}
+          mode="time"
+          is24Hour={true}
+          display="default"
+          onChange={onChangeStartTime}
+        />
+      )}
+
+      {displayEnd ? <Text style={styles.text}>{displayEnd.getHours() + ":" + displayEnd.getMinutes()}</Text> : <Text style={styles.text}>End Time</Text>}
+      <Pressable style={styles.button} onPress={() => setShowEndTimePicker(true)}>
+        <Text style={styles.buttonText}>Select End Time</Text>
+      </Pressable>
+      {showEndTimePicker && eventDate && (
+        <DateTimePicker
+          value={eventEnd ? eventEnd : new Date()}
+          mode='time'
+          display="default"
+          onChange={onChangeEndTime}
+        />
+      )}
+
+      <Text style={styles.text}>Deadline (Optional)</Text>
+      <Pressable style={styles.button} onPress={() => setShowDeadlinePicker(true)}>
+        <Text style={styles.buttonText}>Select Deadline</Text>
+      </Pressable>
+      {showDeadlinePicker && (
+        <DateTimePicker
+          value={deadline ? new Date(deadline) : new Date()}
+          mode="date"
+          display="default"
+          onChange={onChangeDeadline}
+        />
+      )}
+
+      <Pressable style={styles.button} onPress={saveEvent}>
+        <Text style={styles.buttonText}>Save</Text>
+      </Pressable>
+
+      <Pressable style={styles.backButton} onPress={() => router.back()}>
+        <Text style={styles.backButtonText}>Back</Text>
+      </Pressable>
+    </View>
+  );
+}
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    padding: 20,
+    padding: 16,
+    justifyContent: "center",
+    alignContent: "center",
   },
-  header: {
-    fontSize: 24,
+  text: {
+    textAlign: "center",
+    alignContent: "center",
+    justifyContent: "center",
     fontWeight: "bold",
-    marginBottom: 20,
+    marginTop: 15,
   },
-  eventContainer: {
-    padding: 15,
-    borderRadius: 10,
-    backgroundColor: '#f0f0f0',
-    marginBottom: 15,
+  pickerContainer: {
+    borderWidth: 1,
+    borderColor: 'gray',
+    borderRadius: 5,
+    marginBottom: 12,
   },
-  eventName: {
-    fontSize: 18,
-    fontWeight: "bold",
+  picker: {
+    height: 40,
+    color: 'black',
   },
   button: {
-    marginTop: 10,
-    backgroundColor: 'green',
-    padding: 10,
-    borderRadius: 5,
+    margin: 5,
+    alignItems: 'center',
+    alignSelf: "center",
+    paddingVertical: 12,
+    borderRadius: 30,
+    elevation: 3,
+    backgroundColor: 'grey',
+    borderColor: "black",
+    width: 200,
   },
   buttonText: {
-    color: 'white',
-    fontWeight: 'bold',
-    textAlign: 'center',
+    textAlign: "center",
+    fontWeight: "bold",
+    color: "white",
+    fontSize: 15,
+    textShadowColor: "black",
+    textShadowOffset: { width: -4, height: 2 },
+    textShadowRadius: 10
+  },
+  backButton: {
+    marginTop: 100,
+    alignSelf: "center",
+    justifyContent: "center",
+    width: 100,
+  },
+  backButtonText: {
+    textAlign: "center",
+    fontWeight: "bold",
+    color: "white",
+    backgroundColor: "black",
+    paddingHorizontal: 0,
+    borderRadius: 30,
+    paddingVertical: 10,
+    fontSize: 20,
+  },
+  input: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: 12,
+    paddingHorizontal: 8,
   },
 });

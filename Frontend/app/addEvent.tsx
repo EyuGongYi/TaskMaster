@@ -40,8 +40,7 @@ export default function AddEventScreen() {
       alert("End timing is before the start timing");
       return;
     }
-    
-    // Create event in Google Calendar if it has a date
+
     let googleEvent: GoogleEventType | null = null;
     if (eventDate && eventStart && eventEnd) {
       googleEvent = await createGoogleEvent(user!, eventName, eventStart, eventEnd, eventDetail);
@@ -51,8 +50,9 @@ export default function AddEventScreen() {
       }
       googleEvent.priority = priority;
       googleEvent.deadline = deadline;
+      console.log("Event created in Google Calendar:", googleEvent);
     } else {
-      googleEvent = {
+      const asyncEvent: GoogleEventType = {
         eventId: Math.random().toString(36).slice(2, 9),
         eventName,
         eventDetail,
@@ -63,15 +63,12 @@ export default function AddEventScreen() {
         deadline,
         eventDuration,
       };
+      const temp = await AsyncStorage.getItem("events");
+      const updatedEvents = temp ? [...JSON.parse(temp), asyncEvent] : [asyncEvent];
+      await AsyncStorage.setItem("events", JSON.stringify(updatedEvents));
+      console.log("Event added to AsyncStorage:", asyncEvent);
     }
 
-    console.log("created");
-    console.log(googleEvent);
-    // Update events state to include the new event
-    const temp = await AsyncStorage.getItem("events");
-    const updatedEvents = temp ? [...JSON.parse(temp), googleEvent] : [googleEvent];
-    await AsyncStorage.setItem("events", JSON.stringify(updatedEvents));
-    // Clear input fields after saving
     setEventName('');
     setEventStart(undefined);
     setEventDate(undefined);
@@ -83,7 +80,6 @@ export default function AddEventScreen() {
     router.back();
   };
 
-  //Handles all the Input On Change
   const onChangeDate = (event: DateTimePickerEvent, selectedDate?: Date) => {
     const currentDate = selectedDate ? selectedDate : eventDate;
     setShowDatePicker(false);

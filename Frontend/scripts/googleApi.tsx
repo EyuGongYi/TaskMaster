@@ -20,7 +20,6 @@ export async function getCalendarEvents(user: User) {
     });
     const data = await res.json();
     return data.items;
-
 }
 const userEventRef = collection(db, "userEvents");
 
@@ -56,42 +55,47 @@ export async function createUserCalendar(user: authUser) {
     
 }
 
-export async function createGoogleEvent(user: User, eventName: string, eventStart: Date, eventEnd: Date, eventDetail: string) {
-    const docSnap = await getDoc(doc(db, "userEvents", user.uid));
-    if (docSnap.exists() && docSnap.data().calendarId) {
-        const res = await fetch(`https://www.googleapis.com/calendar/v3/calendars/${docSnap.data().calendarId}/events`,{
-            method: "POST",
-            headers: {
-                Authorization: `Bearer ${(await GoogleSignin.getTokens()).accessToken}`,
-            },
-            body: JSON.stringify({
-                end: {dateTime: eventEnd.toISOString()},
-                start: {dateTime: eventStart.toISOString()},
-                summary: eventName,
-                transparency : "opaque",
-                description: eventDetail, 
-            }),
-        }).then(res => {
-            //if request went through check
-            if (res.ok) {
-                return res.json();
-            } else {
-                throw new Error("Creating Google Event Failed");
-            }
-        }).then(data => {
-            const newEvent: GoogleEventType = {
-                eventId: data.id,
-                eventName: data.summary,
-                eventDetail: data.description,
-                eventStart: new Date(data.start.dateTime),
-                eventEnd: new Date(data.end.dateTime),
-                eventDate: new Date(data.start.dateTime),
-            }
-            return newEvent;
-        }).catch(e => console.log(e));
-        return res;
-    } else {
-        throw new Error("CalendarId missing");
+export async function createGoogleEvent(user: User, eventName: string, eventStart: Date, eventEnd: Date, eventDetail: string): Promise<GoogleEventType | null> {
+    try {
+      const docSnap = await getDoc(doc(db, "userEvents", user.uid));
+      if (docSnap.exists() && docSnap.data().calendarId) {
+        const res = await fetch(`https://www.googleapis.com/calendar/v3/calendars/${docSnap.data().calendarId}/events`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${(await GoogleSignin.getTokens()).accessToken}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            end: { dateTime: eventEnd.toISOString() },
+            start: { dateTime: eventStart.toISOString() },
+            summary: eventName,
+            transparency: "opaque",
+            description: eventDetail,
+          }),
+        });
+
+        if (!res.ok) {
+          console.error("Creating Google Event Failed");
+          return null;
+        }
+
+        const data = await res.json();
+        const newEvent: GoogleEventType = {
+          eventId: data.id,
+          eventName: data.summary,
+          eventDetail: data.description,
+          eventStart: new Date(data.start.dateTime),
+          eventEnd: new Date(data.end.dateTime),
+          eventDate: new Date(data.start.dateTime),
+        };
+        return newEvent;
+      } else {
+        console.error("CalendarId missing");
+        return null;
+      }
+    } catch (error) {
+      console.error("Error creating Google Event:", error);
+      return null;
     }
 }
 

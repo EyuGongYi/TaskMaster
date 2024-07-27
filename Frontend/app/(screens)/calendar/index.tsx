@@ -11,29 +11,41 @@ import User from '@/types/user';
 export const getEvents = async (setEventList: Function, user: User) => {
   const event:any[] = await getCalendarEvents(user!);
   const res: Events = event.reduce((acc: any, event: any) => {
-    const date = event.start.dateTime.split("T")[0];
+    const startDate = new Date(event.start.dateTime);
+    const date = startDate.getDate().toString().length > 1 ? 
+                  event.start.dateTime.split("T")[0].slice(0,-2) + startDate.getDate(): 
+                  event.start.dateTime.split("T")[0].slice(0,-2) + "0" +startDate.getDate();
     if (!acc[date]) {
       acc[date] = [];
     }
-    acc[date].push({name: event.summary, height: event.description, day: `Deadline: ${new Date(event.end.dateTime).toDateString()}`});
+    acc[date].push({name: event.summary, height: event, day: `Deadline: ${new Date(event.end.dateTime).toLocaleDateString()}`});
     return acc;
   }, {} as Events) || {};
   setEventList(res);
 }
 
+const renderEmptyDate = () => (
+  <View >
+    <Text>No Items</Text>
+  </View>
+);
+
+
 export default function index() {
   const {user, eventList, setEventList} = useAuth();
   
   useEffect(() => {getEvents(setEventList, user!)}, []);
+  useEffect(() => {
+    console.log('Updated eventList:', eventList);
+  }, [eventList]);
 
   return (
     <SafeAreaView style={styles.container}>
       <Agenda
-        items= {
-          eventList
-        }
+        items= {eventList}
+        renderEmptyDate= {renderEmptyDate}
         renderItem={(item:any, isFirst:any) => (
-          <Pressable style={styles.item} onPress={() => {console.log(eventList)}}>
+          <Pressable style={styles.item} onPress={() => {console.log(item.height)}}>
             <Text style={styles.itemText}>{item.name}</Text>
             <Text style={styles.itemText}>{item.day}</Text>
           </Pressable>

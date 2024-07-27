@@ -32,9 +32,8 @@ export default  function Index() {
     <View style={styles.container}>
       <Text style={styles.text}>Welcome, {context.user?.displayName}!</Text>
       <Text style={styles.dateText}>{formattedDate}</Text>
-      <TodaySchedule events = {events}/>
+      <TodaySchedule />
       <Alert alerts = {alerts}/>
-      <></>
   </View>
   );
 }

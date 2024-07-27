@@ -34,7 +34,7 @@ export default Alert;
 const styles = StyleSheet.create({
     sectionHeader: {
       fontWeight: "bold",
-      fontSize: 18,
+      fontSize: 20,
       marginBottom: 10,
     },
     alertsContainer: {

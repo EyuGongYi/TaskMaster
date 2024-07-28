@@ -29,8 +29,21 @@ export default function AddEventScreen() {
       alert('Please enter the event name');
       return;
     }
+    if (!eventStart && !eventEnd && !priority) {
+      alert('Please set a priority if no timings are provided');
+      return;
+    }
+    if (!eventStart && !eventEnd && !eventDuration) {
+      alert('Please set a duration if no start and end time are provided');
+      return;
+    }
 
-    if (eventStart && eventEnd) {
+    if (eventEnd && eventStart && eventEnd < eventStart) {
+      alert("End timing is before the start timing");
+      return;
+    }
+
+    if (eventStart && eventEnd ) {
       const googleEvent: GoogleEventType = {
         eventId: Math.random().toString(36).slice(2, 9),
         eventName,
@@ -38,6 +51,7 @@ export default function AddEventScreen() {
         eventStart,
         eventEnd,
       };
+      setAddButtonDisable(true);
 
       const newGoogleEvent = await createGoogleEvent(user!, googleEvent.eventName, googleEvent.eventStart, googleEvent.eventEnd, googleEvent.eventDetail);
       if (!newGoogleEvent) {
@@ -212,7 +226,7 @@ export default function AddEventScreen() {
         />
       )}
 
-      <Pressable style={styles.button} onPress={saveEvent}>
+      <Pressable style={styles.button} onPress={saveEvent} disabled={addButtonDisable}>
         <Text style={styles.buttonText}>Save</Text>
       </Pressable>
 

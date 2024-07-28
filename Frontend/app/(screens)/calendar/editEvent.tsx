@@ -154,7 +154,7 @@ export default function EditEventScreen() {
           keyboardType="numeric"
         />
 
-        {eventDate ? <Text style={styles.text}>{eventDate.toISOString().split("T")[0]}</Text> : <Text style={styles.text}>Date</Text>}
+        {eventDate ? <Text style={styles.text}>{eventDate.toLocaleDateString()}</Text> : <Text style={styles.text}>Date</Text>}
         <Pressable style={styles.button} onPress={() => setShowDatePicker(true)}>
           <Text style={styles.buttonText}>Select Date</Text>
         </Pressable>
@@ -167,7 +167,7 @@ export default function EditEventScreen() {
           />
         )}
 
-        {displayStart ? <Text style={styles.text}></Text> : <Text style={styles.text}>Start Time</Text>}
+        {displayStart ? <Text style={styles.text}>{eventStart.toLocaleTimeString()}</Text> : <Text style={styles.text}>Start Time</Text>}
         <Pressable style={styles.button} onPress={() => setShowStartTimePicker(true)}>
           <Text style={styles.buttonText}>Select Start Time</Text>
         </Pressable>
@@ -181,7 +181,7 @@ export default function EditEventScreen() {
           />
         )}
 
-        {displayEnd ? <Text style={styles.text}></Text> : <Text style={styles.text}>End Time</Text>}
+        {displayEnd ? <Text style={styles.text}>{eventEnd.toLocaleTimeString()}</Text> : <Text style={styles.text}>End Time</Text>}
         <Pressable style={styles.button} onPress={() => setShowEndTimePicker(true)}>
           <Text style={styles.buttonText}>Select End Time</Text>
         </Pressable>

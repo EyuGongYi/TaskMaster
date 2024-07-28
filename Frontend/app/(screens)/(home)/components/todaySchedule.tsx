@@ -18,7 +18,9 @@ const TodaySchedule = () => {
     fetchAndSetEvents();
   }, [user]);
 
-  const currentDate = new Date().toISOString().split('T')[0]; // ISO string of today's date
+  const currDate = new Date();
+  const currentDate =  currDate.getDate().toString().length > 1 ? currDate.toISOString().split("T")[0].slice(0,-2) + currDate.getDate(): 
+  currDate.toISOString().split("T")[0].slice(0,-2) + "0" + currDate.getDate();
 
   return (
     <View style={styles.container}>

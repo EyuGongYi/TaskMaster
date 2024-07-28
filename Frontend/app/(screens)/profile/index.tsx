@@ -22,7 +22,6 @@ export default function index() {
       const data = Linking.parse(event.url);
       if (data.queryParams) {
         const token = data.queryParams.message;
-        console.log(token);
       }
     };
     const subscription = Linking.addEventListener('url', handleRedirect);

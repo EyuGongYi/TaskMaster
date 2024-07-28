@@ -1,4 +1,4 @@
-import { View, Text, Pressable, StyleSheet } from 'react-native'
+import { View, Text, Pressable, StyleSheet, ScrollView } from 'react-native'
 import React, { useState } from 'react'
 import { router } from 'expo-router'
 import {Picker} from "@react-native-picker/picker";
@@ -6,6 +6,7 @@ import { getFreeTime } from '@/scripts/googleApi';
 import { useAuth } from '@/hooks/authContext';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { Interval } from '@/types/event';
+
 
 export default function Synced() {
     const {chosenList} = useAuth();
@@ -65,6 +66,7 @@ export default function Synced() {
           >
             <Text style={styles.buttonText}>Find Free Time</Text>
           </Pressable>
+          <ScrollView showsVerticalScrollIndicator={false}>
           {freeTime &&
             freeTime.map((interval, index) => (
               <View key={index} style={styles.intervalContainer}>
@@ -77,6 +79,7 @@ export default function Synced() {
                 </Text>
               </View>
             ))}
+            </ScrollView>
         </View>
       );
     }

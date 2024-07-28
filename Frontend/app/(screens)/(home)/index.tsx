@@ -1,11 +1,19 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Text, View, StyleSheet, ScrollView } from "react-native";
 import Alerts from "./components/alerts";
 import TodaySchedule from "./components/todaySchedule";
 import { useAuth } from "@/hooks/authContext";
+import { isLoggedIn } from "@/scripts/auth";
 
 export default function Index() {
   const context = useAuth();
+
+  useEffect(() => {
+    const func = async () => {
+      console.log(await isLoggedIn());
+    } ;
+    func();
+  },[]);
   
   const currentDate = new Date();
   const formattedDate = currentDate.toLocaleDateString(undefined, {

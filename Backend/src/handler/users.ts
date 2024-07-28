@@ -96,3 +96,7 @@ export async function freeBusy(request: Request, response: Response) {
   }
 }
 
+// Checks if user logged In (mainly to jumpstart server) 
+export async function loggedIn(request: Request, response: Response) {
+  return response.json({"status" : "ok"});
+}

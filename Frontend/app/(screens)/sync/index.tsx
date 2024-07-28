@@ -19,6 +19,7 @@ export default function index() {
       getUsers(search).then(temp => setUserList(temp));
     }
   },[searchParam]);
+  
   return (
     <View style={styles.container}>
       <View style={{flex: 8}}>

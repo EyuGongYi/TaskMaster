@@ -10,7 +10,7 @@ export default function Index() {
 
   useEffect(() => {
     const func = async () => {
-      console.log(await isLoggedIn());
+      isLoggedIn();
     } ;
     func();
   },[]);

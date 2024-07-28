@@ -1,3 +1,5 @@
+
+
 **NUS Orbital 2024 - Milestone 2**
 
 
@@ -118,6 +120,42 @@ We have introduced several new tabs in our app, including Canvas, Recommended Wo
 
 * During Milestone 2, it was surprisingly a challenge was integrating the 'Add Events' feature with Google Calendar in our app. Implementing the 'Add Events' page, included a date and time picker, and as the date time picker module was a bit weird for the android version and wonky to work with and there was time spent fiddling around with how we implemented it to ensure the data is captured and display appropriately
 * Syncing events recorded within our app with Google Calendar also posed challenges. It required much debugging to avoid event duplication and discrepancies between our app and Google Calendar. Additionally, navigating OAuth2 authentication complexities and managing access tokens for secure integration further added to the complexity.
+
+
+## **Milestone 3**
+
+**Tasks:**
+
+
+
+* Completion of features: Canvas, Sync with friends and recommended workflow
+* Completion of Home page: Displays today’s schedule as well as alerts from Canvas and Recommendations
+* Option to edit and delete events from calendar
+* UI Improvements
+
+**Summary:**
+
+We have successfully integrated our app with Moodle, an open-source alternative to Canvas. This feature enables users to view posted assignments and announcements directly within the app. The "Sync with Friends" feature allows users to search for multiple friends' usernames within the app, helping in finding common free timings over a specified period. Our "Recommended Workflow" feature suggests an optimal schedule for users based on their existing tasks and deadlines. The home page of our app has been designed to display the user's schedule for the current day along with any alerts. Alerts include notifications for upcoming assignments and announcements from Canvas (Moodle) as well as reminders for recommended events that have not yet been accepted. We have added the functionality for users to edit and delete events directly from their calendar. This allows users to manage their schedules dynamically and make adjustments as needed. For our UI improvements, we designed our app such that navigation through the app is seamless, easy to use and appealing to our users.
+
+**Challenges:**
+
+**Moodle API:**
+
+
+
+* Similar to the Google API, integrating the Moodle API posed significant challenges, primarily due to its complexity and the need for a thorough understanding to fetch assignments and announcements accurately. It took us a while to understand how to set and manage the tokens effectively, ensuring secure and seamless communication between our app and Moodle.
+
+**Logic behind ‘Recommended Workflow’ feature:**
+
+
+
+* Implementing the 'Recommended Workflow' feature was particularly challenging due to the need to handle events with and without predefined timings correctly. The process involved separating these events and developing a filtering and conditional logic to generate effective recommendations. The solution was to typecast events as "GoogleEventType" for those with set timings and "RecoEventType" for those without. This approach simplified the logic and ensured that all events were appropriately managed, ultimately making the recommendation process more efficient.
+
+**Sync with friends:**
+
+
+
+* 
 
 
 # **Timeline and Development Plan**
@@ -276,7 +314,7 @@ We have introduced several new tabs in our app, including Canvas, Recommended Wo
    </td>
   </tr>
   <tr>
-   <td rowspan="9" >3
+   <td rowspan="8" >3
    </td>
    <td rowspan="4" >Features to be implemented
    </td>
@@ -345,19 +383,6 @@ We have introduced several new tabs in our app, including Canvas, Recommended Wo
    </td>
   </tr>
   <tr>
-   <td>Widget feature
-   </td>
-   <td>
-<ul>
-
-<li>Implement the widget feature if time allows
-</li>
-</ul>
-   </td>
-   <td>If time permits (very very difficult)
-   </td>
-  </tr>
-  <tr>
    <td>Debugging
    </td>
    <td>
@@ -403,7 +428,7 @@ Enable users to log in using their Google account credentials and integrate Goog
 
 ### **Implementation Philosophy**
 
-The implementation involves using OAuth2 authentication for secure Google login via Firebase Authentication. Once authenticated, the app accesses Google Calendar API to fetch, add, and update events. Data handling includes storing user tokens securely and managing calendar events with real-time synchronization.
+The implementation involves using OAuth2 authentication for secure Google login via Firebase Authentication. Once authenticated, the app accesses Google Calendar API to fetch, add, and update events. Data handling includes storing user tokens securely and managing calendar events with real-time synchronization. We wanted to use the Google Calendar API as it streamline our application with the users google calendar, allowing the calendar to be easily ported over to any devices. Using  the Calendar API also reduced the storage space of our backend database, making the application less costly if we have a  large user base in the case that we decide to further develop it and have it work  with Canvas
 
 **Fully Implemented:**
 
@@ -417,7 +442,7 @@ The implementation involves using OAuth2 authentication for secure Google login 
 
 
 
-* **OAuth2 Authentication:** Implementing secure OAuth2 flows and handling access tokens securely.
+* **OAuth2 Authentication:** Implementing secure OAuth2 flows and handling access tokens securely. As there are different OAuth2 flows, the fear of handling access tokens insecurely and the documentation for google API usage was messy to get through, especially for a mobile application, this was surprisingly the biggest hurdle out of everything in our project that we faced.
 * **API Integration:** Ensuring proper integration with Google Calendar API endpoints for event management.
 * **Data Synchronization:** Real-time synchronization of calendar events between the app and Google Calendar to maintain consistency.
 
@@ -433,6 +458,33 @@ The implementation involves using OAuth2 authentication for secure Google login 
 
 
 
+---
+
+
+## **Home Page**
+
+
+### **Description**
+
+The Home Page serves as the central hub of our app, providing users with a comprehensive view of their schedule. It displays the current date, the user's name, upcoming events from Google Calendar, and alerts from CANVAS and the Recommendations tab. This integrated view combines data from CANVAS (Moodle) for assignments and announcements, user-generated events, and recommended events from the recommendations tab, ensuring a seamless user experience with intuitive navigation and event management.
+
+
+### **Implementation Philosophy**
+
+Currently, the Home Page successfully renders the current date and user's name using React Native components. The UI design is finalized, setting the template for other tabs. The integration of today's events from Google Calendar and alerts from CANVAS (Moodle) is complete, with data being fetched from Google Calendar and Moodle API. This provides users with real-time updates on their schedule and important alerts.
+
+
+### **Implementation Challenges**
+
+
+
+* **Data Integration:** Integrating data from multiple sources (Moodle, Recommendations, and user calendar) into a unified calendar view required careful handling of different data formats and synchronization.
+* **UI Design:** Designing a visually appealing calendar interface that accommodates various screen sizes was essential. The numerous components making up the homepage required constant adjustments to values and styling to maintain a consistent and user-friendly layout.
+
+
+### **Diagrams/Screenshots: **
+
+
 
 <p id="gdcalert2" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image2.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert3">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
 
@@ -444,28 +496,77 @@ The implementation involves using OAuth2 authentication for secure Google login 
 ---
 
 
-## **Home Page**
+## **Calendar**
 
 
 ### **Description**
 
-The Home Page serves as the central hub, displaying the current date, user's name, upcoming events from Google Calendar, and alerts from CANVAS as well as a button for users to add events quickly. This is to provide users a comprehensive view of their schedule, integrating data from NUSMods for course timetable, CANVAS for assignments, and user-generated events. Ensuring a seamless user experience with intuitive navigation and event management.
+The Calendar Tab offers a comprehensive view of the user’s Google Calendar, allowing users to seamlessly view, edit, delete, and add events. Events added through the app are synchronized with the user’s Google Calendar, ensuring accessibility across all devices. This synchronization allows users to manage their schedules efficiently, with real-time updates reflected immediately on their Google Calendar.
 
 
 ### **Implementation Philosophy**
 
-Currently, the Home Page successfully renders the current date and user's name using React Native components. The UI design is finalized, setting the template for other tabs. However, integration of today's events from Google Calendar and alerts from CANVAS is in progress. Future implementation will involve fetching data from Google Calendar and CANVAS APIs.
+We developed a robust calendar feature that enables users to not only view their existing events but also add new ones through an 'Add Event' page. This page utilizes intuitive date and time pickers, allowing users to specify event details easily. The calendar also supports editing and deleting events directly within the app, with changes being synchronized in real-time with the user's Google Calendar. Additionally, events without fixed timings are seamlessly transitioned to the recommendations tab for further management.
 
 
 ### **Implementation Challenges**
 
 
 
-* **Data Integration**: Integrating data from multiple sources (NUSMods, CANVAS, user inputs) into a unified calendar view.
-* **UI**: Designing a responsive and visually appealing calendar interface that accommodates various screen sizes.
+* **Date and Time Pickers Compatibility:** Ensuring compatibility of date and time pickers across both iOS and Android platforms posed significant challenges. Some components were not fully compatible with Android versions, necessitating extensive testing and adjustments to achieve a seamless user experience.
+* **Time Transfer to Calendar:** Implementing the seamless transfer of event times from user input to the Google Calendar API involved overcoming technical complexities. This was crucial to avoid discrepancies between the app and calendar entries, ensuring accurate event scheduling. The packages used to help us with the Calendar had a weird data type to work with and the need to handle the timezone issue and ISO format took us awhile to figure out.
+* **Transition to Recommendations Tab:** Managing events created without fixed timings required a smooth transition to the recommendations tab. This involved addressing difficulties in event management and typecasting to ensure a streamlined user experience. Events with fixed timings are typecast as “GoogleEventTypes” while non-fixed ones (sent to recommendations) are typecast as “RecoEventTypes.” Additionally, while “GoogleEventTypes” can be easily stored in the user’s Google Calendar, “RecoEventTypes” could not due to lacking time data, necessitating the use of async storage.
 
 
-### **Diagrams/Screenshots: **
+### **Diagrams/Screenshots**
+
+
+
+
+---
+
+
+## **Canvas Assignment Checker **
+
+
+### **Description**
+
+
+### The Canvas Assignment Checker is an automated script that monitors Moodle (used as a substitute for CANVAS, as we do not have access to CANVAS API and Moodle is open source) for new announcements and assignments. It provides real-time updates to users, ensuring they are promptly informed.
+
+If Testers are interested in tinkering with the moodle system, the testing account and details are provided at the bottom
+
+
+### **Implementation Philosophy**
+
+The Canvas Assignment Checker aims to boost user productivity by delivering timely notifications about new Moodle updates. The implementation includes:
+
+
+
+* **Real-Time Monitoring:** Continuous monitoring of Moodle for any new announcements and assignments.
+* **Assignment/Announcements Delivery:** Integration with backend services to fetch data in real-time and deliver assignments/announcements immediately to users.
+* **User Interface Integration:** Displaying fetched announcements and assignments within the app's UI, ensuring users can view and manage their tasks efficiently.
+
+Moodle was used in our application as it was suggested to be used as a proof of concept as working the NUS Canvas was going to be a hassle. We were also not too comfortable with NUS Canvas as it is our first time handling security and sensitive information. Moodle also provided the ability for us to better test TaskMaster as we are able to add and edit assignments and announcements. 
+
+
+### **Implementation Challenges**
+
+
+    **Moodle API Complexities:**
+
+
+
+* **Token Management:** Handling the token-based authentication system of Moodle was challenging. The process involved understanding how to generate, store, and refresh tokens securely.
+* **API Documentation and Stability:** The Moodle API documentation was not very friendly for beginners to look at, requiring significant time to comprehend the correct endpoints and methods to use. Additionally, ensuring the API calls were stable and reliable posed an ongoing challenge.
+
+    **Role Allocation:**
+
+* **Different Permissions:** Moodle assigns different permissions to roles like students and teachers. Implementing a system that correctly handled these permissions was crucial to fetch data accurately.
+* **Role-Specific Data Fetching:** Ensuring that the app could fetch the correct data based on the user’s role (e.g., only fetching assignments for students and creation capabilities for teachers) required detailed logic and testing.
+
+
+### **Diagrams/Screenshots**
 
 
 
@@ -479,36 +580,45 @@ Currently, the Home Page successfully renders the current date and user's name u
 ---
 
 
-## **Calendar**
+## **Suggested Workflow Feature **
 
 
 ### **Description**
 
-The Calendar Tab displays the user’s Google Calendar, enabling users to view existing events and add new events. Events added through the app are synchronized with the user’s Google Calendar, accessible across devices.
+An algorithmic recommendation system designed to organize assignments into a suggested workflow. The system prioritizes tasks based on deadlines, estimated completion times, and priority levels, helping users manage their time more efficiently.
 
 
 ### **Implementation Philosophy**
 
-We developed an 'Add Event' page enabling users to input events into their calendars within our app. Utilizing date and time pickers, users can specify event details seamlessly. Real-time data synchronization ensures that any events added or updated in the app are immediately reflected on the user’s Google Calendar."
-
-**Fully Implemented:**
-
-
-
-* Display of user’s Google Calendar events within the app.
-* Ability to add new events directly to the Google Calendar through the app.
-* Real-time synchronization of events between the app and Google Calendar.
+The primary goal is to optimize user time management by suggesting a prioritized sequence of tasks. The system leverages straightforward filtering and conditional logic to create personalized workflows. Users input an event with a deadline, duration, and priority level, and the event is initially typecast as a "RecoEventType." This typecast event runs through the algorithm to generate a suggested timing. Upon user acceptance, the event is converted to a "GoogleEventType" and synchronized with the user's Google Calendar.
 
 
 ### **Implementation Challenges**
 
 
-
-* **Date and Time Pickers Compatibility:** Integrating compatible date and time pickers across both iOS and Android platforms posed challenges, as some components were not fully compatible with Android versions, requiring additional testing and adjustments.
-* **Time Transfer to Calendar:** Implementing a seamless transfer of event times from the user input to the Google Calendar API involved overcoming technical complexities to avoid discrepancies between app and calendar entries.
+    **Typecast Issues:**
 
 
-### **Diagrams/Screenshots**
+
+* **Initial Complexity:** Initially, filtering the correct events for generating accurate suggestions was difficult due to poor typecasting. This complexity hindered the system's ability to compare and prioritize events effectively. This was solved by cleaning the code and ensuring precise typecasting, making it simpler to handle events. Properly distinguishing between "RecoEventType" and "GoogleEventType" allowed the system to filter and process events accurately, enhancing the recommendation accuracy.
+
+    **Algorithm Development:**
+
+* **Task Prioritization Logic:** Developing an algorithm that effectively prioritize tasks based on multiple criteria (deadline, duration, priority) was challenging. The logic needed to account for various scenarios and user inputs to generate optimal recommendations.
+* **Real-Time Adjustments:** Ensuring the algorithm could adapt to real-time changes in user inputs or event updates required continuous testing and refinement.
+
+    **User Experience:**
+
+* **Seamless Transition:** Facilitating a smooth transition from "RecoEventType" to "GoogleEventType" upon user acceptance involves integrating the recommendation system with the Google Calendar API seamlessly.
+* **Intuitive Interface:** Designing an interface that allowed users to input events easily and understand the generated recommendations required thoughtful UI/UX design. The goal was to make the process intuitive and user-friendly, minimizing any potential confusion.
+
+    **Data Synchronization:**
+
+* **Google Calendar Integration:** Implementing real-time synchronization with Google Calendar to reflect accepted events accurately posed technical challenges. Ensuring that events were updated without discrepancies between the app and the calendar was crucial.
+* **Async Storage for RecoEvents:** Since "RecoEventTypes" cannot be stored in Google Calendar without fixed timings, using async storage to manage these events until they are accepted was necessary. Ensuring data consistency and reliability in this intermediate storage step was vital.
+
+
+### **Diagrams/Screenshots:** 
 
 
 
@@ -519,140 +629,57 @@ We developed an 'Add Event' page enabling users to input events into their calen
 
 
 
-
-
 ---
 
 
-## **Canvas Assignment Checker (Incomplete)**
+## **Sync With Friend**
 
 
 ### **Description**
 
-
-### Automated script to monitor CANVAS for new announcements and assignments, notifying users accordingly.
+A feature that allows users to synchronize their timetables with friends, making it easier to coordinate group projects, study sessions, or any other collaborative activities by identifying common free times.
 
 
 ### **Implementation Philosophy**
 
-To enhance user productivity by providing timely notifications for new CANVAS updates. Integration with backend services for real-time data fetching and notification delivery.
+The goal is to foster collaboration and improve time management among users by identifying and displaying common free times. This is achieved through implementing a user search functionality and real-time synchronization algorithms. Users can search for friends' usernames, link their timetables, and view overlapping free time slots.
 
 
 ### **Implementation Challenges**
 
 
-
-* TBH
-
-
-### **Diagrams/Screenshots**
-
-
----
-
-
-## **Suggested Workflow Feature (Incomplete)**
-
-
-### **Description**
-
-Algorithmic recommendation system to organize assignments into a suggested workflow based on deadlines and estimated completion times.
-
-
-### **Implementation Philosophy**
-
-To optimize user time management by suggesting prioritized task sequences. Utilizing machine learning or heuristic algorithms to generate personalized workflows.
-
-
-### **Implementation Challenges**
+    **User-Friendly Interface:**
 
 
 
-* TBC
+* **Design:** Creating an intuitive and visually appealing interface that allows users to easily search for friends and sync their timetables was challenging. Ensuring that the process is straightforward and user-friendly was a primary focus.
+* **User Interaction:** Designing a smooth interaction flow, where users can quickly link their timetables with friends and view the results without confusion, required thorough UI/UX testing and iteration.
 
+    **Real-Time Synchronization Algorithms:**
 
-### **Diagrams/Screenshots:** 
+* **Efficiency:** Developing efficient algorithms to identify and display common free time slots was technically demanding. The algorithms needed to handle large datasets and perform real-time calculations to provide accurate results.
+* **Accuracy:** Ensuring that the identified free time slots were accurate and up-to-date with the latest timetable changes required robust synchronization logic. This involved continuous testing and optimization.
 
+    **Linking with Other Users:**
 
----
+* **Access and Permissions:** Linking with other users and accessing their calendar data presented significant challenges. Ensuring that our application had the correct permissions and handled the offline token correctly so that the token does not become invalid.
+* **Data Consistency:** Maintaining data consistency between linked users, especially when timetables are frequently updated, was essential to provide reliable synchronization. This involved implementing robust data handling mechanisms.
 
+    **Backend Integration:**
 
-## **Mod Choice Bidding Aid (Incomplete)**
-
-
-### **Description**
-
-Feature to assist users in arranging mod choice slots for mod bidding, providing recommendations based on user preferences and availability.
-
-
-### **Implementation Philosophy**
-
-To streamline the mod bidding process by offering optimized slot arrangements. Incorporating user preferences, availability data, and historical bidding trends.
-
-
-### **Implementation Challenges**
-
-
-
-*  TBH 
+* **API Integration:** Integrating with backend services to fetch and update timetable data in real-time posed technical challenges. Ensuring that the API calls were efficient and handled errors gracefully was crucial.
+* **Scalability:** Designing the system to handle multiple users syncing their timetables simultaneously required careful consideration of scalability and performance.
 
 
 ### **Diagrams/Screenshots: **
 
 
----
+
+<p id="gdcalert5" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image5.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert6">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
 
 
-## **Widget (Incomplete)**
+![alt_text](images/image5.png "image_tooltip")
 
-
-### **Description**
-
-Widget functionality allows users to view their calendar or to-do list directly from their device’s home screen.
-
-
-### **Implementation Philosophy**
-
-To enhance accessibility and usability by providing quick access to essential app features without launching the full application. Customizable widget options to cater to user preferences.
-
-
-### **Implementation Challenges**
-
-
-
-* TBH ( High Chance will be scrapped)
-
-**Diagrams/Screenshots:** [Include screenshots or diagrams of the widget on the home screen]
-
-
----
-
-
-## **Sync With Friend (Incomplete)**
-
-
-### **Description**
-
-Feature enabling users to synchronize timetables with friends, facilitating coordination for group projects or study sessions.
-
-
-### **Implementation Philosophy**
-
-To foster collaboration and time management among users by identifying common free timings. Implementing user search functionality and real-time synchronization algorithms.
-
-
-### **Implementation Challenges**
-
-
-
-* Designing a secure and user-friendly interface for linking and syncing timetables between users.
-* Implementing efficient algorithms to identify and display common free time slots.
-* Handling privacy concerns and ensuring user consent and data security measures.
-
-
-### **Diagrams/Screenshots: **
-
-[Include any relevant interface mockups or flow diagrams]
 
 
 ---
@@ -666,23 +693,23 @@ To foster collaboration and time management among users by identifying common fr
 
 
 
-<p id="gdcalert5" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image5.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert6">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
+<p id="gdcalert6" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image6.png). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert7">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
 
 
-![alt_text](images/image5.png "image_tooltip")
+![alt_text](images/image6.png "image_tooltip")
 
 
 Click on this link and run it under development Build:
 
-<span style="text-decoration:underline;">https://expo.dev/preview/update?message=MileStone2&updateRuntimeVersion=1.0.0&createdAt=2024-06-30T15%3A41%3A22.361Z&slug=TaskMaster&projectId=a19afe2a-7aa8-4f75-b19c-64c121b9b2a9&group=572c7382-637e-4ae5-843c-b375aefee680</span>
+<span style="text-decoration:underline;">https://expo.dev/preview/update?message=MileStone%203&updateRuntimeVersion=1.0.0&createdAt=2024-07-28T19%3A31%3A41.874Z&slug=TaskMaster&projectId=a19afe2a-7aa8-4f75-b19c-64c121b9b2a9&group=0fba628e-dd59-49d7-95bd-807d1571f0d8</span>
 
 
     
 
-<p id="gdcalert6" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image6.jpg). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert7">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
+<p id="gdcalert7" ><span style="color: red; font-weight: bold">>>>>>  gd2md-html alert: inline image link here (to images/image7.jpg). Store image on your image server and adjust path/filename/extension if necessary. </span><br>(<a href="#">Back to top</a>)(<a href="#gdcalert8">Next alert</a>)<br><span style="color: red; font-weight: bold">>>>>> </span></p>
 
 
-![alt_text](images/image6.jpg "image_tooltip")
+![alt_text](images/image7.jpg "image_tooltip")
 <span style="text-decoration:underline;">v</span>
 
 Run it under development build
@@ -692,6 +719,26 @@ Note: Due to the Application being unverified, only selected test users can use 
 Gmail: taskmastertest27@gmail.com
 
 PW: .taskMaster69420!
+
+We use Moodle as a proof of concept for Canvas and you may be automatically logged into it when pressing the “Canvas” tab, otherwise you are required to enter the email below.
+
+Moodle:
+
+[https://taskmasterr.moodlecloud.com](https://taskmasterr.moodlecloud.com) 
+
+Student account:
+
+Username: test1
+
+PW: .taskMaster69420!
+
+Teacher account:
+
+Username: test2
+
+PW: .taskMaster69420!
+
+Feel free to go onto the temp moodle site we have to tinker between the student account and the teacher account. Taskmaster currently checks for assignment type only and the special announcement forum of the course the user is enrolled into. Just to show the concept of it working with canvas. 
 
 Poster: 
 

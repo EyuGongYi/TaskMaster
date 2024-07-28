@@ -4,7 +4,6 @@ import { Picker } from '@react-native-picker/picker';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { GoogleEventType, RecoEventType } from '@/types/event';
-import { GoogleEventType, RecoEventType } from '@/types/event';
 import { router } from 'expo-router';
 import { createGoogleEvent } from '@/scripts/googleApi';
 import { useAuth } from '@/hooks/authContext';

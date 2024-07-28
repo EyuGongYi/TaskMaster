@@ -7,6 +7,7 @@ import { getCalendarEvents, createGoogleEvent } from '@/scripts/googleApi';
 
 const getRecoEvents = async (): Promise<RecoEventType[]> => {
   const temp = await AsyncStorage.getItem("recoEvents");
+  console.log(temp);
   return temp ? JSON.parse(temp) : [];
 };
 
@@ -71,7 +72,6 @@ const RecommendationPage: React.FC = () => {
   const handleAcceptSuggestion = async (event: RecoEventType, suggestedDate: { start: Date, end: Date }) => {
     if (user) {
       const newEvent: GoogleEventType = {
-        eventId: event.eventId,
         eventName: event.eventName,
         eventDetail: event.eventDetail,
         eventStart: suggestedDate.start,

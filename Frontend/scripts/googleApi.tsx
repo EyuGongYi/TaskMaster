@@ -5,9 +5,11 @@ import { User as authUser } from "firebase/auth";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { collection, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 
-// Fetches Google Calendar events for the user
+
+
+
 export async function getCalendarEvents(user: User): Promise<GoogleEventType[]> {
-    const userRef = doc(db, "userEvents", user.uid);
+    const userRef = doc(db,"userEvents", user.uid);
     const docSnap = await getDoc(userRef);
     const calendarId = docSnap.data()!.calendarId;
     const res = await fetch(`https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events`, {
@@ -41,7 +43,7 @@ export async function createUserCalendar(user: authUser) {
             headers: {
                 Authorization: `Bearer ${(await GoogleSignin.getTokens()).accessToken}`,
             },
-            body: JSON.stringify({ summary: "TaskMaster Calendar" }),
+            body: JSON.stringify({summary: "TaskMaster Calendar"}),
         });
         if (!res.ok) {
             throw new Error("Calendar creation failed");
@@ -49,9 +51,9 @@ export async function createUserCalendar(user: authUser) {
         const data = await res.json();
         await updateDoc(userRef, { calendarId: data.id });
     }
+    
 }
 
-// Creates a Google Calendar event
 export async function createGoogleEvent(user: User, eventName: string, eventStart: Date, eventEnd: Date, eventDetail: string): Promise<GoogleEventType | null> {
     try {
         const docSnap = await getDoc(doc(db, "userEvents", user.uid));
@@ -85,7 +87,7 @@ export async function createGoogleEvent(user: User, eventName: string, eventStar
         } else {
             console.error("CalendarId missing");
             return null;
-        }
+      }
     } catch (error) {
         console.error("Error creating Google Event:", error);
         return null;

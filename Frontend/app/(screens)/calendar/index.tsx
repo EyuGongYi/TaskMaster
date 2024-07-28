@@ -4,7 +4,7 @@ import { router } from 'expo-router';
 import { Agenda, AgendaEntry } from 'react-native-calendars';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '@/hooks/authContext';
-import { Events, GoogleEventType, CustomAgendaEntry } from '@/types/event';
+import { CustomAgendaEntry, Events, GoogleEventType } from '@/types/event';
 import { getCalendarEvents } from '@/scripts/googleApi';
 import User from '@/types/user';
 
@@ -16,12 +16,13 @@ export const getEvents = async (setEventList: Function, user: User) => {
     if (!acc[date]) {
       acc[date] = [];
     }
-    const entry: CustomAgendaEntry = {
+    const entry = {
       name: event.eventName,
-      height: 50, // Example height, you can adjust as needed
+      height: 50,
       day: `${event.eventStart.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${event.eventEnd.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`,
       start: event.eventStart,
-      end: event.eventEnd
+      end: event.eventEnd,
+      event: event
     };
     acc[date].push(entry);
     return acc;
@@ -36,26 +37,22 @@ const renderEmptyDate = () => (
   </View>
 );
 
-export default function Index() {
-  const { user, eventList, setEventList } = useAuth();
 
-  useEffect(() => {
-    if (user) {
-      getEvents(setEventList, user);
-    }
-  }, [user]);
-
-  useEffect(() => {
-    console.log('Updated eventList:', eventList);
-  }, [eventList]);
+export default function index() {
+  const {user, eventList, setEventList} = useAuth();
+  
+  useEffect(() => {getEvents(setEventList, user!)}, []);
 
   return (
     <SafeAreaView style={styles.container}>
       <Agenda
-        items={eventList}
-        renderEmptyDate={renderEmptyDate}
-        renderItem={(item: CustomAgendaEntry, isFirst: boolean) => (
-          <Pressable style={styles.item} onPress={() => { console.log(item) }}>
+        items= {eventList}
+        renderEmptyDate= {renderEmptyDate}
+        renderItem={(item:any, isFirst:any) => (
+          <Pressable style={styles.item} onPress={() => {router.push({pathname:"/(screens)/calendar/event",
+                                                                       params:{eventId: item.event.eventId,
+                                                                          date: item.start.toISOString().split('T')[0]
+                                                                       }})}}>
             <Text style={styles.itemText}>{item.name}</Text>
             <Text style={styles.itemText}>{item.day}</Text>
           </Pressable>

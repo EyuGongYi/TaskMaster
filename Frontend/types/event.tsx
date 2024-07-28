@@ -17,7 +17,6 @@ export type GoogleEventType = {
     eventStart: Date;
     eventEnd: Date;
 };
-
 export type RecoEventType = {
     eventId?: string;
     eventName: string;
@@ -31,12 +30,12 @@ export type RecoEventType = {
 export interface CustomAgendaEntry extends AgendaEntry {
     start: Date;
     end: Date;
+    event: GoogleEventType;
 }
 
-// Update Events type to use CustomAgendaEntry
-export interface Events {
-    [date: string]: CustomAgendaEntry[];
-}
+export interface Events{
+    [date: string] : CustomAgendaEntry[];
+  }
 
 export interface Interval {
     start: string; // ISO format

@@ -6,6 +6,7 @@ import session from "express-session";
 import MongoStore from "connect-mongo";
 import * as Admin from "firebase-admin";
 import bodyParser from "body-parser";
+import moodleRouter from "./router/moodle";
 
 declare module "express-session" {
     interface SessionData {
@@ -43,6 +44,7 @@ export function createApp() {
     
     //Registering of routers
     app.use("/api/users", userRouter);
+    app.use("/api/moodle", moodleRouter)
 
     return app;
 }

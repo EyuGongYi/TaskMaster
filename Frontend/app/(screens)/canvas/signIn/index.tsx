@@ -1,24 +1,42 @@
-import React from 'react';
-import { View, Text, StyleSheet, Pressable, Alert } from 'react-native';
-import { authorize } from 'react-native-app-auth';
+import React, { useEffect, useState } from 'react';
+import { View, Text, StyleSheet, Pressable, Alert, TextInput } from 'react-native';
+import { getUserIdByEmail, storeMoodleId } from '@/app/moodleApi';
+import { auth, db } from '@/firebaseConfig';
+import { doc, getDoc } from 'firebase/firestore';
 import { router } from 'expo-router';
-import * as Keychain from 'react-native-keychain';
-import { moodleConfig } from '@/app/moodleApi';
 
 const LoginPage: React.FC = () => {
-  const handleLogin = async () => {
-    try {
-      const authState = await authorize(moodleConfig);
-      await Keychain.setGenericPassword('token', authState.accessToken);
-      router.replace("/canvasPage");
-    } catch (error) {
-      Alert.alert('Login Error', 'Failed to authenticate with Moodle.');
-      console.error('Authentication error:', error);
+  const [email, setEmail] = useState("");
+  useEffect(() => {
+    const checkIfLoggedIn = async () => {
+      const docSnap = await getDoc(doc(db, "userEvents", auth.currentUser!.providerData[0].uid));
+      if (docSnap.exists() && docSnap.data().moodleID) {
+        router.push("/(screens)/canvas/canvasPage");
+      }
     }
+    checkIfLoggedIn();
+  },[]);
+
+  const handleLogin = async () => {
+    const id = await getUserIdByEmail(email);
+    if (id == null) {
+      alert("Cannot Find User");
+      return ;
+    }
+    storeMoodleId(id);
+
+    router.push("/(screens)/canvas/canvasPage");
   };
 
   return (
     <View style={styles.container}>
+      <TextInput
+          placeholder="email"
+          value={email}
+          onChangeText={text => setEmail(text)}
+          style={styles.input}
+        />
+      
       <Pressable onPress={handleLogin}>
         <Text style={styles.loginButton}>Login with Moodle</Text>
       </Pressable>
@@ -44,5 +62,12 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 20,
     textAlign: "center",
+  },
+  input: {
+    height: 40,
+    borderColor: 'gray',
+    borderWidth: 1,
+    marginBottom: 12,
+    paddingHorizontal: 8,
   },
 });

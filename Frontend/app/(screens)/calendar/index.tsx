@@ -78,7 +78,7 @@ const styles = StyleSheet.create({
   },
   item: {
     flex: 1,
-    backgroundColor: "skyblue",
+    backgroundColor: "#b4d8d6", // Item background color
     borderRadius: 15,
     padding: 10,
     marginRight: 10,
@@ -88,7 +88,7 @@ const styles = StyleSheet.create({
   },
   itemText: {
     fontSize: 20,
-    color: "white",
+    color: "#4A4A4A", // Item text color
   },
   addEventButton: {
     height: 70,
@@ -98,17 +98,10 @@ const styles = StyleSheet.create({
   addEvent: {
     fontWeight: "bold",
     fontSize: 30,
-    color: "white",
-    backgroundColor: "black",
+    color: "#FAF3F3", // Add event button text color
+    backgroundColor: "#f15a7e", // Add event button background color
     borderRadius: 75,
     paddingHorizontal: 15,
-    textAlign: "center",
-  },
-  loginButton: {
-    fontWeight: "bold",
-    fontSize: 30,
-    backgroundColor: "orange",
-    paddingHorizontal: 20,
     textAlign: "center",
   },
 });

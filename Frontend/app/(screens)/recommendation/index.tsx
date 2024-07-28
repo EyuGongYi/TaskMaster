@@ -101,7 +101,7 @@ const RecommendationPage: React.FC = () => {
               <View key={index} style={styles.eventContainer}>
                 <Text style={styles.eventName}>{event.eventName}</Text>
                 <Text>No suitable time slot found before the deadline.</Text>
-                <Pressable style={styles.button} onPress={async () => {
+                <Pressable style={[styles.button, styles.deleteButton]} onPress={async () => {
                   const updatedRecoEvents = recoEvents.filter(e => e.eventId !== event.eventId);
                   await AsyncStorage.setItem("recoEvents", JSON.stringify(updatedRecoEvents));
                   setRecoEvents(updatedRecoEvents);
@@ -114,11 +114,11 @@ const RecommendationPage: React.FC = () => {
           return (
             <View key={index} style={styles.eventContainer}>
               <Text style={styles.eventName}>{event.eventName}</Text>
-              <Text>Suggested Date: {suggestedDate.start.toDateString()}</Text>
-              <Text>Suggested Start Time: {suggestedDate.start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Text>
-              <Text>Suggested End Time: {suggestedDate.end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Text>
-              <Text>Priority: {event.priority}</Text>
-              <Text>Details: {event.eventDetail}</Text>
+              <Text style={styles.eventDetailText}>Suggested Date: {suggestedDate.start.toDateString()}</Text>
+              <Text style={styles.eventDetailText}>Suggested Start Time: {suggestedDate.start.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Text>
+              <Text style={styles.eventDetailText}>Suggested End Time: {suggestedDate.end.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</Text>
+              <Text style={styles.eventDetailText}>Priority: {event.priority}</Text>
+              <Text style={styles.eventDetailText}>Details: {event.eventDetail}</Text>
               <Pressable style={styles.button} onPress={() => handleAcceptSuggestion(event, suggestedDate)}>
                 <Text style={styles.buttonText}>Accept Suggestion</Text>
               </Pressable>
@@ -138,27 +138,39 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+    backgroundColor: '#f0f0f0',
   },
   header: {
     fontSize: 24,
     fontWeight: "bold",
     marginBottom: 20,
+    color: '#3a2f34',
   },
   eventContainer: {
     padding: 15,
     borderRadius: 10,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#e4b45f',
     marginBottom: 15,
   },
   eventName: {
     fontSize: 18,
     fontWeight: "bold",
+    color: '#3a2f34',
+    marginBottom: 10,
+  },
+  eventDetailText: {
+    fontSize: 14,
+    color: '#3a2f34',
+    marginBottom: 5,
   },
   button: {
     marginTop: 10,
-    backgroundColor: 'green',
+    backgroundColor: '#468c2e',
     padding: 10,
     borderRadius: 5,
+  },
+  deleteButton: {
+    backgroundColor: '#ef577b',
   },
   buttonText: {
     color: 'white',

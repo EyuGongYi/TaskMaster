@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, Pressable } from 'react-native';
+import { View, Text, TextInput, StyleSheet, Pressable, KeyboardAvoidingView, Platform, ScrollView } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -132,112 +132,120 @@ export default function AddEventScreen() {
   const displayEnd = eventEnd;
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.text}>Add Event</Text>
-      <TextInput
-        placeholder="Event Name"
-        value={eventName}
-        onChangeText={text => setEventName(text)}
-        style={styles.input}
-      />
-
-      <Text style={styles.text}>Details</Text>
-      <TextInput
-        placeholder="Details"
-        value={eventDetail}
-        onChangeText={text => setEventDetail(text)}
-        style={styles.input}
-      />
-
-      <Text style={styles.text}>Priority (Optional if timings are provided)</Text>
-      <View style={styles.pickerContainer}>
-        <Picker
-          selectedValue={priority}
-          onValueChange={(itemValue) => setPriority(itemValue as 'Low' | 'Medium' | 'High' | 'ASAP')}
-          style={styles.picker}
-        >
-          <Picker.Item label="Low" value="Low" />
-          <Picker.Item label="Medium" value="Medium" />
-          <Picker.Item label="High" value="High" />
-          <Picker.Item label="ASAP" value="ASAP" />
-        </Picker>
-      </View>
-
-      <Text style={styles.text}>Duration (Minutes) (Optional if timings are provided)</Text>
-      <TextInput
-        placeholder="Event Duration"
-        value={eventDuration ? eventDuration.toString() : ''}
-        onChangeText={text => setEventDuration(parseInt(text))}
-        style={styles.input}
-        keyboardType="numeric"
-      />
-
-      {eventDate ? <Text style={styles.text}>{eventDate.toISOString().split("T")[0]}</Text> : <Text style={styles.text}>Date</Text>}
-      <Pressable style={styles.button} onPress={() => setShowDatePicker(true)}>
-        <Text style={styles.buttonText}>Select Date</Text>
-      </Pressable>
-      {showDatePicker && (
-        <DateTimePicker
-          value={eventDate ? new Date(eventDate) : new Date()}
-          mode="date"
-          display="default"
-          onChange={onChangeDate}
+    <KeyboardAvoidingView style={styles.container} behavior={Platform.OS === "android" ? "padding" : "height"}>
+      <ScrollView contentContainerStyle={styles.scrollContainer}>
+        <Text style={styles.text}>Add Event</Text>
+        <TextInput
+          placeholder="Event Name"
+          value={eventName}
+          onChangeText={text => setEventName(text)}
+          style={styles.input}
         />
-      )}
 
-      {displayStart ? <Text style={styles.text}>{displayStart.getHours() + ":" + displayStart.getMinutes()}</Text> : <Text style={styles.text}>Start Time</Text>}
-      <Pressable style={styles.button} onPress={() => setShowStartTimePicker(true)}>
-        <Text style={styles.buttonText}>Select Start Time</Text>
-      </Pressable>
-      {showStartTimePicker && eventDate && (
-        <DateTimePicker
-          value={eventStart ? eventStart : new Date()}
-          mode="time"
-          is24Hour={true}
-          display="default"
-          onChange={onChangeStartTime}
+        <Text style={styles.text}>Details</Text>
+        <TextInput
+          placeholder="Details"
+          value={eventDetail}
+          onChangeText={text => setEventDetail(text)}
+          style={styles.input}
         />
-      )}
 
-      {displayEnd ? <Text style={styles.text}>{displayEnd.getHours() + ":" + displayEnd.getMinutes()}</Text> : <Text style={styles.text}>End Time</Text>}
-      <Pressable style={styles.button} onPress={() => setShowEndTimePicker(true)}>
-        <Text style={styles.buttonText}>Select End Time</Text>
-      </Pressable>
-      {showEndTimePicker && eventDate && (
-        <DateTimePicker
-          value={eventEnd ? eventEnd : new Date()}
-          mode='time'
-          display="default"
-          onChange={onChangeEndTime}
-        />
-      )}
+        <Text style={styles.text}>Priority (Optional if timings are provided)</Text>
+        <View style={styles.pickerContainer}>
+          <Picker
+            selectedValue={priority}
+            onValueChange={(itemValue) => setPriority(itemValue as 'Low' | 'Medium' | 'High' | 'ASAP')}
+            style={styles.picker}
+          >
+            <Picker.Item label="Low" value="Low" />
+            <Picker.Item label="Medium" value="Medium" />
+            <Picker.Item label="High" value="High" />
+            <Picker.Item label="ASAP" value="ASAP" />
+          </Picker>
+        </View>
 
-      <Text style={styles.text}>Deadline (Optional)</Text>
-      <Pressable style={styles.button} onPress={() => setShowDeadlinePicker(true)}>
-        <Text style={styles.buttonText}>Select Deadline</Text>
-      </Pressable>
-      {showDeadlinePicker && (
-        <DateTimePicker
-          value={deadline ? new Date(deadline) : new Date()}
-          mode="date"
-          display="default"
-          onChange={onChangeDeadline}
+        <Text style={styles.text}>Duration (Minutes) (Optional if timings are provided)</Text>
+        <TextInput
+          placeholder="Event Duration"
+          value={eventDuration ? eventDuration.toString() : ''}
+          onChangeText={text => setEventDuration(parseInt(text))}
+          style={styles.input}
+          keyboardType="numeric"
         />
-      )}
+
+        {eventDate ? <Text style={styles.text}>{eventDate.toISOString().split("T")[0]}</Text> : <Text style={styles.text}>Date</Text>}
+        <Pressable style={styles.button} onPress={() => setShowDatePicker(true)}>
+          <Text style={styles.buttonText}>Select Date</Text>
+        </Pressable>
+        {showDatePicker && (
+          <DateTimePicker
+            value={eventDate ? new Date(eventDate) : new Date()}
+            mode="date"
+            display="default"
+            onChange={onChangeDate}
+          />
+        )}
+
+        {displayStart ? <Text style={styles.text}></Text> : <Text style={styles.text}>Start Time</Text>}
+        <Pressable style={styles.button} onPress={() => setShowStartTimePicker(true)}>
+          <Text style={styles.buttonText}>Select Start Time</Text>
+        </Pressable>
+        {showStartTimePicker && eventDate && (
+          <DateTimePicker
+            value={eventStart ? eventStart : new Date()}
+            mode="time"
+            is24Hour={true}
+            display="default"
+            onChange={onChangeStartTime}
+          />
+        )}
+
+        {displayEnd ? <Text style={styles.text}></Text> : <Text style={styles.text}>End Time</Text>}
+        <Pressable style={styles.button} onPress={() => setShowEndTimePicker(true)}>
+          <Text style={styles.buttonText}>Select End Time</Text>
+        </Pressable>
+        {showEndTimePicker && eventDate && (
+          <DateTimePicker
+            value={eventEnd ? eventEnd : new Date()}
+            mode='time'
+            display="default"
+            onChange={onChangeEndTime}
+          />
+        )}
+
+        <Text style={styles.text}>Deadline (Optional)</Text>
+        <Pressable style={styles.button} onPress={() => setShowDeadlinePicker(true)}>
+          <Text style={styles.buttonText}>Select Deadline</Text>
+        </Pressable>
+        {showDeadlinePicker && (
+          <DateTimePicker
+            value={deadline ? new Date(deadline) : new Date()}
+            mode="date"
+            display="default"
+            onChange={onChangeDeadline}
+          />
+        )}
 
       <Pressable style={styles.button} onPress={saveEvent} disabled={addButtonDisable}>
         <Text style={styles.buttonText}>Save</Text>
       </Pressable>
 
-      <Pressable style={styles.backButton} onPress={() => router.back()}>
-        <Text style={styles.backButtonText}>Back</Text>
-      </Pressable>
-    </View>
+        <Pressable style={styles.backButton} onPress={() => router.back()}>
+          <Text style={styles.backButtonText}>Back</Text>
+        </Pressable>
+      </ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
+    padding: 16,
+    justifyContent: "center",
+    alignContent: "center",
+    backgroundColor: "#FAF3F3", // Background color
+  },
+  scrollContainer: {
     padding: 16,
     justifyContent: "center",
     alignContent: "center",
@@ -248,6 +256,7 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     fontWeight: "bold",
     marginTop: 15,
+    color: "#4A4A4A", // Text color
   },
   pickerContainer: {
     borderWidth: 1,
@@ -266,21 +275,21 @@ const styles = StyleSheet.create({
     paddingVertical: 12,
     borderRadius: 30,
     elevation: 3,
-    backgroundColor: 'grey',
+    backgroundColor: '#e4b45f', // Button background color
     borderColor: "black",
     width: 200,
   },
   buttonText: {
     textAlign: "center",
     fontWeight: "bold",
-    color: "white",
+    color: "white", // Button text color
     fontSize: 15,
-    textShadowColor: "black",
-    textShadowOffset: { width: -4, height: 2 },
-    textShadowRadius: 10
+    textShadowColor: 'black',
+    textShadowOffset: { width: -1, height: 1 },
+    textShadowRadius: 10,
   },
   backButton: {
-    marginTop: 100,
+    marginTop: 30,
     alignSelf: "center",
     justifyContent: "center",
     width: 100,
@@ -288,12 +297,15 @@ const styles = StyleSheet.create({
   backButtonText: {
     textAlign: "center",
     fontWeight: "bold",
-    color: "white",
-    backgroundColor: "black",
+    color: "white", // Back button text color
+    backgroundColor: "#8575fb", // Back button background color
     paddingHorizontal: 0,
     borderRadius: 30,
     paddingVertical: 10,
     fontSize: 20,
+    textShadowColor: 'black',
+    textShadowOffset: { width: -1, height: 1 },
+    textShadowRadius: 10,
   },
   input: {
     height: 40,
@@ -301,5 +313,6 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     marginBottom: 12,
     paddingHorizontal: 8,
+    color: '#4A4A4A', // Input text color
   },
 });

@@ -1,6 +1,6 @@
 import { View, Text, StyleSheet, Pressable } from 'react-native';
-import React, { useEffect } from 'react';
-import { router } from 'expo-router';
+import React, { useCallback, useEffect } from 'react';
+import { router, useFocusEffect } from 'expo-router';
 import { Agenda, AgendaEntry } from 'react-native-calendars';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '@/hooks/authContext';
@@ -12,7 +12,10 @@ export const getEvents = async (setEventList: Function, user: User) => {
   const events: GoogleEventType[] = await getCalendarEvents(user);
   
   const res: Events = events.reduce((acc: Events, event: GoogleEventType) => {
-    const date = event.eventStart.toISOString().split('T')[0];
+    
+    const date =  event.eventStart.getDate().toString().length > 1 ? 
+    event.eventStart.toISOString().split("T")[0].slice(0,-2) + event.eventStart.getDate(): 
+    event.eventStart.toISOString().split("T")[0].slice(0,-2) + "0" +event.eventStart.getDate();
     if (!acc[date]) {
       acc[date] = [];
     }
@@ -41,7 +44,9 @@ const renderEmptyDate = () => (
 export default function index() {
   const {user, eventList, setEventList} = useAuth();
   
-  useEffect(() => {getEvents(setEventList, user!)}, []);
+  useFocusEffect(useCallback(() => {
+    getEvents(setEventList, user!);
+  },[]));
 
   return (
     <SafeAreaView style={styles.container}>
@@ -51,7 +56,7 @@ export default function index() {
         renderItem={(item:any, isFirst:any) => (
           <Pressable style={styles.item} onPress={() => {router.push({pathname:"/(screens)/calendar/event",
                                                                        params:{eventId: item.event.eventId,
-                                                                          date: item.start.toISOString().split('T')[0]
+                                                                          date: item.start.getTime()
                                                                        }})}}>
             <Text style={styles.itemText}>{item.name}</Text>
             <Text style={styles.itemText}>{item.day}</Text>

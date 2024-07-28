@@ -84,7 +84,6 @@ export default function AddEventScreen() {
     setPriority("Low");
     setDeadline(undefined);
     setEventDuration(undefined);
-    router.back();
   };
 
     //Handles all the Input On Change

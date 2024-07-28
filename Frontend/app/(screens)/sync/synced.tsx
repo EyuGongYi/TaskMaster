@@ -86,7 +86,7 @@ export default function Synced() {
         flex: 1,
         paddingVertical: 30,
         paddingHorizontal: 20,
-        backgroundColor: '#f0f0f0',
+        backgroundColor: '#FAF3F3',
       },
       title: {
         alignSelf: 'center',

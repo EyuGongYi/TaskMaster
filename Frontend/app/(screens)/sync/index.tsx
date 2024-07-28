@@ -59,7 +59,7 @@ const styles = StyleSheet.create({
     flexShrink: 1,
     flexBasis: 0,
     flex: 1,
-    backgroundColor: '#f0f0f0',
+    backgroundColor: '#FAF3F3',
   },
   userListContainer: {
     flex: 8,

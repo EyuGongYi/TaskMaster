@@ -1,7 +1,7 @@
 import { auth, db } from "@/firebaseConfig";
 import { GoogleEventType, Interval } from "@/types/event";
 import User from "@/types/user";
-import {User as authUser} from "firebase/auth";
+import { User as authUser } from "firebase/auth";
 import { GoogleSignin } from "@react-native-google-signin/google-signin";
 import { collection, doc, getDoc, setDoc, updateDoc } from "firebase/firestore";
 
@@ -12,7 +12,7 @@ export async function getCalendarEvents(user: User): Promise<GoogleEventType[]> 
     const userRef = doc(db,"userEvents", user.uid);
     const docSnap = await getDoc(userRef);
     const calendarId = docSnap.data()!.calendarId;
-    const res = await fetch(`https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events`,{
+    const res = await fetch(`https://www.googleapis.com/calendar/v3/calendars/${calendarId}/events`, {
         method: "GET",
         headers: {
             Authorization: `Bearer ${((await GoogleSignin.getTokens())).accessToken}`,
@@ -27,17 +27,18 @@ export async function getCalendarEvents(user: User): Promise<GoogleEventType[]> 
         eventEnd: new Date(event.end.dateTime),
     }));
 }
+
 const userEventRef = collection(db, "userEvents");
 
+// Creates a TaskMaster calendar for the user if it doesn't exist
 export async function createUserCalendar(user: authUser) {
     if (user) {
-        const userRef =doc(db, "userEvents", user.providerData[0].uid);
+        const userRef = doc(db, "userEvents", user.providerData[0].uid);
         const docSnap = await getDoc(userRef);
         if (docSnap.exists() && docSnap.data().calendarId) {
             return;
         }
-        //Create TaskMaster Calendar
-        const res = await fetch("https://www.googleapis.com/calendar/v3/calendars",{
+        const res = await fetch("https://www.googleapis.com/calendar/v3/calendars", {
             method: "POST",
             headers: {
                 Authorization: `Bearer ${(await GoogleSignin.getTokens()).accessToken}`,
@@ -88,113 +89,69 @@ export async function createGoogleEvent(user: User, eventName: string, eventStar
             return null;
       }
     } catch (error) {
-      console.error("Error creating Google Event:", error);
-      return null;
+        console.error("Error creating Google Event:", error);
+        return null;
     }
 }
 
-/** 
- * FreeBusy
- * @param startTiming  earliest time to check
- * @param endTiming Last timing to check
- * @param users Array of users to check
- * 
- * @returns Array of free timing
-*/
+// Retrieves free time slots for multiple users
 export async function getFreeTime(users: User[], startTiming: string, endTiming: string) {
-    //Becomes an array of busy start and end time in date format
     const intervals = users.map(async user => {
-        const userRef = doc(db,"userEvents", user.uid);
+        const userRef = doc(db, "userEvents", user.uid);
         const docSnap = await getDoc(userRef);
         const calendarId = docSnap.data()!.calendarId;
-        const res = await fetch(process.env.EXPO_PUBLIC_SERVER_URL! + "/api/users/freeBusy",{
+        const res = await fetch(process.env.EXPO_PUBLIC_SERVER_URL! + "/api/users/freeBusy", {
             method: "POST",
             headers: {
                 Authorization: `Bearer ${await auth.currentUser!.getIdToken()}`,
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                "calendarId": calendarId,
-                "user": user,
-                "startTime": startTiming,
-                "endTime": endTiming,
-
+                calendarId,
+                user,
+                startTime: startTiming,
+                endTime: endTiming,
             }),
-        })
+        });
         const data = await res.json();
-        const ans = data[calendarId].busy;
-        return ans;
+        return data[calendarId].busy;
     });
-    const inter  = await Promise.all(intervals);
-    const res = inter.flatMap(intervals => {
-        return intervals;
-    }).map(intervals => {
-        return ({
-            start: new Date(intervals.start),
-            end: new Date(intervals.end)
-        })
-    });
-    //sort array
+    const inter = await Promise.all(intervals);
+    const res = inter.flat().map(intervals => ({
+        start: new Date(intervals.start),
+        end: new Date(intervals.end),
+    }));
     res.sort((a, b) => a.start.getTime() - b.start.getTime());
-    res.forEach(entry => console.log(entry.start));
     const combined: Interval[] = [];
     let current = res[0];
-
     for (let i = 1; i < res.length; i++) {
         if (current.end >= res[i].start) {
-          // If intervals overlap or are adjacent, merge them
-          current.end = new Date(Math.max(current.end.getTime(), res[i].end.getTime()));
+            current.end = new Date(Math.max(current.end.getTime(), res[i].end.getTime()));
         } else {
-          // If they don't overlap, push the current interval and move to the next
-          combined.push({
-            start: current.start.toISOString(),
-            end: current.end.toISOString()
-          });
-          current = res[i];
+            combined.push({ start: current.start.toISOString(), end: current.end.toISOString() });
+            current = res[i];
         }
-      }
-    
-    combined.push({
-        start: current.start.toISOString(),
-        end: current.end.toISOString()
-    });
+    }
+    combined.push({ start: current.start.toISOString(), end: current.end.toISOString() });
     const free = [];
     let curr = startTiming;
     for (let i = 0; i < combined.length; i++) {
-        free.push({
-            start: curr,
-            end: combined[i].start
-        });
+        free.push({ start: curr, end: combined[i].start });
         curr = combined[i].end;
     }
-    free.push({
-        start: curr,
-        end: endTiming
-    })
+    free.push({ start: curr, end: endTiming });
     return free;
-
 }
 
-
-/**
- * Set Offline Token 
- * @description sets user offline token into the db
- * @param user current user details
- * @returns void
- */
+// Sets offline token for the user
 export async function setOfflineToken(userId: string) {
-    const res = await fetch(process.env.EXPO_PUBLIC_SERVER_URL! + "/api/users/offlineToken",{
+    const res = await fetch(process.env.EXPO_PUBLIC_SERVER_URL! + "/api/users/offlineToken", {
         method: "POST",
         headers: {
             Authorization: `Bearer ${await auth.currentUser!.getIdToken()}`,
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({"offlineToken": GoogleSignin.getCurrentUser()!.serverAuthCode!, "uid": userId}),
+        body: JSON.stringify({ offlineToken: GoogleSignin.getCurrentUser()!.serverAuthCode!, uid: userId }),
     });
-    if (res.ok && res.status == 200) {
-        return true;
-    } else {
-        return false;
-    }
+    return res.ok && res.status == 200;
 }
-

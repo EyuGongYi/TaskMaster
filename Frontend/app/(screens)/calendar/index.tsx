@@ -1,5 +1,5 @@
-import { View, Text, StyleSheet, Pressable } from 'react-native'
-import React, { useEffect } from 'react'
+import { View, Text, StyleSheet, Pressable } from 'react-native';
+import React, { useEffect } from 'react';
 import { router } from 'expo-router';
 import { Agenda, AgendaEntry } from 'react-native-calendars';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -32,7 +32,7 @@ export const getEvents = async (setEventList: Function, user: User) => {
 }
 
 const renderEmptyDate = () => (
-  <View >
+  <View>
     <Text>No Items</Text>
   </View>
 );
@@ -59,12 +59,11 @@ export default function index() {
         )}
       />
       <View style={styles.addEventButton}>
-        <Pressable  onPress={() => {router.push("/addEvent")}}>
+        <Pressable onPress={() => { router.push("/addEvent") }}>
           <Text style={styles.addEvent}>+</Text>
         </Pressable>
       </View>
-        
-      </SafeAreaView>
+    </SafeAreaView>
   )
 }
 
@@ -73,7 +72,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   item: {
-    flex:1,
+    flex: 1,
     backgroundColor: "skyblue",
     borderRadius: 15,
     padding: 10,

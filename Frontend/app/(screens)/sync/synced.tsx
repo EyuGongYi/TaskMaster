@@ -68,12 +68,12 @@ export default function Synced() {
           {freeTime &&
             freeTime.map((interval, index) => (
               <View key={index} style={styles.intervalContainer}>
-                <Text style={styles.intervalText}>Free Interval</Text>
+                <Text style={styles.intervalText}>Timing</Text>
                 <Text style={styles.intervalText}>
-                  {new Date(interval.start).toLocaleDateString()} {new Date(interval.start).toLocaleTimeString()}
+                  From: {new Date(interval.start).toLocaleDateString()} {new Date(interval.start).toLocaleTimeString()}
                 </Text>
                 <Text style={styles.intervalText}>
-                  {new Date(interval.end).toLocaleDateString()} {new Date(interval.end).toLocaleTimeString()}
+                  To: {new Date(interval.end).toLocaleDateString()} {new Date(interval.end).toLocaleTimeString()}
                 </Text>
               </View>
             ))}

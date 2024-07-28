@@ -13,13 +13,6 @@ const alerts: AssignmentAlert[] = [
   { type: 'Announcement', message: 'New course material uploaded' }
 ];
 
-//Mock data for Calendar Events
-const events: CalendarEvent[] = [
-  { type: 'Event', start: '10:00 AM', end: '12:00pm', title: 'Meeting' },
-  { type: 'Event', start: '12:00 PM', end: '1:00pm', title: 'Lunch' },
-  { type: 'Event', start: '4:00 PM', end: '5:00pm', title: 'Workshop' },
-];
-
 export default  function Index() {
   const context = useAuth();
   

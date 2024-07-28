@@ -18,19 +18,6 @@ export async function login(email: string, password: string) {
     }
 };
 
-export async function register(email: string, password: string) {
-    try {
-        return false;
-        //const res = await axios.post(process.env.EXPO_PUBLIC_PORTURL + "/api/auth/register", {
-        //    email: email,
-        //    password : password,
-        //});
-        //return res.status === 201;
-    } catch (err) {
-        return false;
-    }
-};
-
 export async function isLoggedIn() {
     try {
         const token = await SecureStore.getItemAsync("Token");

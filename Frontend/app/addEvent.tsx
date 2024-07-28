@@ -3,7 +3,7 @@ import { View, Text, TextInput, StyleSheet, Pressable } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { GoogleEventType } from '@/types/event';
+import { GoogleEventType, RecoEventType } from '@/types/event';
 import { router } from 'expo-router';
 import { createGoogleEvent } from '@/scripts/googleApi';
 import { useAuth } from '@/hooks/authContext';
@@ -15,7 +15,7 @@ export default function AddEventScreen() {
   const [eventEnd, setEventEnd] = useState<Date>();
   const [eventDetail, setEventDetail] = useState('');
   const [eventDuration, setEventDuration] = useState<number>();
-  const [priority, setPriority] = useState<'Low' | 'Medium' | 'High' | 'ASAP'>();
+  const [priority, setPriority] = useState<'Low' | 'Medium' | 'High' | 'ASAP'>("Low");
   const [deadline, setDeadline] = useState<Date>();
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showStartTimePicker, setShowStartTimePicker] = useState(false);
@@ -55,29 +55,29 @@ export default function AddEventScreen() {
         alert("Created!");
       }
     } else {
-      const googleEvent = {
+      const recoEvent: RecoEventType = {
+        eventId: Math.random().toString(36).slice(2, 9),
         eventName,
         eventDetail,
-        priority,
-        eventDate,
-        eventStart, 
-        eventEnd,
-        deadline,
-        eventDuration,
+        priority: priority!,
+        deadline: deadline!,
+        eventDuration: eventDuration!,
       };
-      const temp = await AsyncStorage.getItem("events");
-      const updatedEvents = temp ? [...JSON.parse(temp), googleEvent] : [googleEvent];
-      await AsyncStorage.setItem("events", JSON.stringify(updatedEvents));
+      const temp = await AsyncStorage.getItem("recoEvents");
+      const updatedEvents = temp ? [...JSON.parse(temp), recoEvent] : [recoEvent];
+      await AsyncStorage.setItem("recoEvents", JSON.stringify(updatedEvents));
+      alert("Created RecoEvents");
     }
      
     router.back();
+    setAddButtonDisable(false);
     // Clear input fields after saving
     setEventName('');
     setEventStart(undefined);
     setEventDate(undefined);
     setEventEnd(undefined);
     setEventDetail("");
-    setPriority(undefined);
+    setPriority("Low");
     setDeadline(undefined);
     };
 
@@ -86,7 +86,6 @@ export default function AddEventScreen() {
       const currentDate = selectedDate ? selectedDate : eventDate;
       setShowDatePicker(false);
       setEventDate(currentDate);
-      console.log(currentDate);
       if (eventStart) {
         eventStart.setDate(currentDate!.getDate());
         eventStart.setMonth(currentDate!.getMonth());

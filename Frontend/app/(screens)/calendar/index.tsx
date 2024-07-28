@@ -4,23 +4,30 @@ import { router } from 'expo-router';
 import { Agenda, AgendaEntry } from 'react-native-calendars';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '@/hooks/authContext';
-import { Events, GoogleEventType } from '@/types/event';
+import { CustomAgendaEntry, Events, GoogleEventType } from '@/types/event';
 import { getCalendarEvents } from '@/scripts/googleApi';
 import User from '@/types/user';
 
 export const getEvents = async (setEventList: Function, user: User) => {
-  const event:any[] = await getCalendarEvents(user!);
-  const res: Events = event.reduce((acc: any, event: any) => {
-    const startDate = new Date(event.start.dateTime);
-    const date = startDate.getDate().toString().length > 1 ? 
-                  event.start.dateTime.split("T")[0].slice(0,-2) + startDate.getDate(): 
-                  event.start.dateTime.split("T")[0].slice(0,-2) + "0" +startDate.getDate();
+  const events: GoogleEventType[] = await getCalendarEvents(user);
+  
+  const res: Events = events.reduce((acc: Events, event: GoogleEventType) => {
+    const date = event.eventStart.toISOString().split('T')[0];
     if (!acc[date]) {
       acc[date] = [];
     }
-    acc[date].push({name: event.summary, height: event, day: `Deadline: ${new Date(event.end.dateTime).toLocaleDateString()}`});
+    const entry = {
+      name: event.eventName,
+      height: 50,
+      day: `${event.eventStart.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${event.eventEnd.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`,
+      start: event.eventStart,
+      end: event.eventEnd,
+      event: event
+    };
+    acc[date].push(entry);
     return acc;
-  }, {} as Events) || {};
+  }, {} as Events);
+
   setEventList(res);
 }
 
@@ -35,9 +42,6 @@ export default function index() {
   const {user, eventList, setEventList} = useAuth();
   
   useEffect(() => {getEvents(setEventList, user!)}, []);
-  useEffect(() => {
-    console.log('Updated eventList:', eventList);
-  }, [eventList]);
 
   return (
     <SafeAreaView style={styles.container}>
@@ -45,7 +49,10 @@ export default function index() {
         items= {eventList}
         renderEmptyDate= {renderEmptyDate}
         renderItem={(item:any, isFirst:any) => (
-          <Pressable style={styles.item} onPress={() => {console.log(item.height)}}>
+          <Pressable style={styles.item} onPress={() => {router.push({pathname:"/(screens)/calendar/event",
+                                                                       params:{eventId: item.event.eventId,
+                                                                          date: item.start.toISOString().split('T')[0]
+                                                                       }})}}>
             <Text style={styles.itemText}>{item.name}</Text>
             <Text style={styles.itemText}>{item.day}</Text>
           </Pressable>

@@ -23,14 +23,18 @@ export default function index() {
     <View style={styles.container}>
       <View style={{flex: 8}}>
         {userList && userList.map((user: User) => (
-          <ProfileCard {...user}/>
+            <View key={user.uid}>
+                <ProfileCard {...user}/>
+            </View>
         ))}
       </View>
       <View style={{flex:1, flexDirection: "row"}}>
         <View style= {{flex: 8}}>
           <ScrollView horizontal={true}>
             {chosenList && chosenList.map((user: User) => (
-              <ChosenProfile {...user}/>
+              <View key={user.uid}>
+                <ChosenProfile {...user}/>
+              </View>
             ))}
           </ScrollView>
         </View>

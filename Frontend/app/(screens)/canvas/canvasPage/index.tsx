@@ -1,8 +1,8 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { View, Text, StyleSheet, Pressable, SafeAreaView, ScrollView, RefreshControl, ActivityIndicator } from 'react-native';
-import * as Keychain from 'react-native-keychain';
-import { fetchAssignments, fetchAnnouncements } from '../../../moodleApi';
 import { Assignment, Announcement } from '@/types/canvas';
+import { getAllAnnouncements, getAllAssignments, getAssignmentStatus, getUserCourseIDs } from '@/app/moodleApi';
+import { htmlToText } from 'html-to-text';
 
 const CanvasPage: React.FC = () => {
   const [assignments, setAssignments] = useState<Assignment[]>([]);
@@ -10,49 +10,55 @@ const CanvasPage: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
 
-  const handleFetchDetails = async () => {
-    try {
-      setLoading(true);
-      const credentials = await Keychain.getGenericPassword();
-      if (credentials) {
-        const fetchedAssignments = await fetchAssignments(credentials.password);
-        const fetchedAnnouncements = await fetchAnnouncements(credentials.password);
-        setAssignments(fetchedAssignments);
-        setAnnouncements(fetchedAnnouncements);
-        setError('');
-      } else {
-        setError('No credentials stored.');
-      }
-    } catch (error) {
-      console.error('Error fetching Moodle details:', error);
-      setError('Failed to fetch data. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
+  // get undone assignment
   useEffect(() => {
-    handleFetchDetails();
-  }, []);
+    const func = async () => {
+      const courseIds = await getUserCourseIDs();
+      let incompleteAssignments = [];
+      if (courseIds){
+        const allAssignment = await getAllAssignments(courseIds);
+        for (let i  = 0; i < allAssignment.length; i ++) {
+          const currAssignment = allAssignment[i];
+          const assignmentStatus = await getAssignmentStatus(currAssignment.id);
+          
+          if (assignmentStatus.lastattempt.submission.status !== "submitted" ) {
+            incompleteAssignments.push({
+              id: currAssignment.id,
+              name: currAssignment.name,
+              description: htmlToText(currAssignment.intro, {wordwrap: false}),
+              dueDate: currAssignment.duedate,
+            })
+          }
+        }
+      }
+      setAssignments(incompleteAssignments);
+    }
+    func();
+    
 
-  const onRefresh = useCallback(() => {
-    handleFetchDetails();
-  }, []);
+  },[]);
+
+  //get announcement
+  useEffect(() => {
+    const func = async () => {
+      let temp :Announcement[] = [];
+      const announcements: any[] = await getAllAnnouncements();
+      const res = announcements.map((a) => ({
+        id: a.id,
+        subject: a.name,
+        message: htmlToText(a.message, {wordwrap: false}),
+        timeCreated: a.created
+      }));
+      setAnnouncements(res.sort((a, b) => a.timeCreated - b.timeCreated));
+    }
+    func();
+  },[]);
 
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView
         contentContainerStyle={styles.scrollViewContent}
-        refreshControl={
-          <RefreshControl
-            refreshing={loading}
-            onRefresh={onRefresh}
-          />
-        }
       >
-        <Pressable onPress={handleFetchDetails} style={styles.refreshButton}>
-          <Text style={styles.loginButton}>Refresh Data</Text>
-        </Pressable>
 
         {loading && <ActivityIndicator size="large" color="#0000ff" />}
         {error ? (
@@ -60,30 +66,34 @@ const CanvasPage: React.FC = () => {
         ) : (
           <>
             <Text style={styles.sectionTitle}>Assignments</Text>
-            {assignments.length > 0 ? (
-              assignments.map((assignment) => (
+            <ScrollView style={{maxHeight: "50%"}} showsVerticalScrollIndicator={false}>
+            {assignments.length > 0 ? 
+              (assignments.map((assignment) => (
                 <View key={assignment.id} style={styles.itemContainer}>
                   <Text style={styles.itemTitle}>{assignment.name}</Text>
-                  <Text>{assignment.intro}</Text>
-                  <Text>Due Date: {new Date(assignment.duedate * 1000).toLocaleDateString()}</Text>
+                  <Text>{assignment.description}</Text>
+                  <Text>Due Date: {new Date(assignment.dueDate * 1000).toLocaleDateString()}</Text>
                 </View>
               ))
             ) : (
               <Text>No assignments found</Text>
             )}
+            </ScrollView>
 
             <Text style={styles.sectionTitle}>Announcements</Text>
+            <ScrollView style={{maxHeight: "50%"}} showsVerticalScrollIndicator={false}>
             {announcements.length > 0 ? (
               announcements.map((announcement) => (
                 <View key={announcement.id} style={styles.itemContainer}>
                   <Text style={styles.itemTitle}>{announcement.subject}</Text>
                   <Text>{announcement.message}</Text>
-                  <Text>Posted on: {new Date(announcement.timecreated * 1000).toLocaleDateString()}</Text>
+                  <Text>Posted on: {new Date(announcement.timeCreated * 1000).toLocaleDateString()}</Text>
                 </View>
               ))
             ) : (
               <Text>No announcements found</Text>
             )}
+            </ScrollView>
           </>
         )}
       </ScrollView>

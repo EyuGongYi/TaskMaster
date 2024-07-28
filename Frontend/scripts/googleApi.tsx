@@ -155,3 +155,69 @@ export async function setOfflineToken(userId: string) {
     });
     return res.ok && res.status == 200;
 }
+
+export async function updateGoogleEvent(user: User, eventName: string, eventStart: Date, eventEnd: Date, eventDetail: string, eventId: string): Promise<GoogleEventType | null> {
+    try {
+        const docSnap = await getDoc(doc(db, "userEvents", user.uid));
+        if (docSnap.exists() && docSnap.data().calendarId) {
+            const res = await fetch(`https://www.googleapis.com/calendar/v3/calendars/${docSnap.data().calendarId}/events/${eventId}`, {
+                method: "PUT",
+                headers: {
+                    Authorization: `Bearer ${(await GoogleSignin.getTokens()).accessToken}`,
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    end: { dateTime: eventEnd.toISOString() },
+                    start: { dateTime: eventStart.toISOString() },
+                    summary: eventName,
+                    transparency: "opaque",
+                    description: eventDetail,
+                }),
+            });
+            if (!res.ok) {
+                console.error("Editing Google Event Failed");
+                return null;
+            }
+            const data = await res.json();
+            return {
+                eventId: data.id,
+                eventName: data.summary,
+                eventDetail: data.description,
+                eventStart: new Date(data.start.dateTime),
+                eventEnd: new Date(data.end.dateTime),
+            };
+        } else {
+            console.error("CalendarId missing");
+            return null;
+      }
+    } catch (error) {
+        console.log( error);
+        return null;
+    }
+}
+
+export async function deleteGoogleEvent(user: User, eventId: string) {
+    try {
+        const docSnap = await getDoc(doc(db, "userEvents", user.uid));
+        if (docSnap.exists() && docSnap.data().calendarId) {
+            const res = await fetch(`https://www.googleapis.com/calendar/v3/calendars/${docSnap.data().calendarId}/events/${eventId}`, {
+                method: "DELETE",
+                headers: {
+                    Authorization: `Bearer ${(await GoogleSignin.getTokens()).accessToken}`,
+                    "Content-Type": "application/json",
+                },
+            });
+            if (!res.ok) {
+                console.error("Deleting Google Event Failed");
+                return false;
+            }
+            return true;
+        } else {
+            console.error("CalendarId missing");
+            return null;
+      }
+    } catch (error) {
+        console.log( error);
+        return null;
+    }
+};

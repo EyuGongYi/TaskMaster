@@ -5,17 +5,18 @@ import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/dat
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { GoogleEventType, RecoEventType } from '@/types/event';
 import { router, useLocalSearchParams } from 'expo-router';
-import { createGoogleEvent } from '@/scripts/googleApi';
+import { createGoogleEvent, updateGoogleEvent } from '@/scripts/googleApi';
 import { useAuth } from '@/hooks/authContext';
 
 export default function EditEventScreen() {
   const params = useLocalSearchParams();
-  const [eventName, setEventName] = useState('');
-  const [eventDate, setEventDate] = useState<Date>();
-  const [eventStart, setEventStart] = useState<Date>();
-  const [eventEnd, setEventEnd] = useState<Date>();
+  const {eventId, date, start, end, name, details} = params;
+  const [eventName, setEventName] = useState<string>(String(name));
+  const [eventDate, setEventDate] = useState<Date>(new Date(Number(date)));
+  const [eventStart, setEventStart] = useState<Date>(new Date(Number(start)));
+  const [eventEnd, setEventEnd] = useState<Date>(new Date(Number(end)));
   const [eventDuration, setEventDuration] = useState<number>();
-  const [eventDetail, setEventDetail] = useState('');
+  const [eventDetail, setEventDetail] = useState<string>(String(details));
   const [priority, setPriority] = useState<'Low' | 'Medium' | 'High' | 'ASAP'>('Low');
   const [deadline, setDeadline] = useState<Date>();
   const [showDatePicker, setShowDatePicker] = useState(false);
@@ -46,7 +47,7 @@ export default function EditEventScreen() {
 
     if (eventStart && eventEnd) {
       const googleEvent: GoogleEventType = {
-        eventId: Math.random().toString(36).slice(2, 9),
+        eventId: String(eventId),
         eventName,
         eventDetail,
         eventStart,
@@ -54,38 +55,16 @@ export default function EditEventScreen() {
       };
       setAddButtonDisable(true);
 
-      const newGoogleEvent = await createGoogleEvent(user!, googleEvent.eventName, googleEvent.eventStart, googleEvent.eventEnd, googleEvent.eventDetail);
+      const newGoogleEvent = await updateGoogleEvent(user!, googleEvent.eventName, googleEvent.eventStart, googleEvent.eventEnd, googleEvent.eventDetail, googleEvent.eventId!);
       if (!newGoogleEvent) {
         alert("Failed to create Google event");
         return;
       }
-    } else {
-      const recoEvent: RecoEventType = {
-        eventId: Math.random().toString(36).slice(2, 9),
-        eventName,
-        eventDetail,
-        priority: priority!,
-        deadline: deadline!,
-        eventDuration: eventDuration!,
-      };
-      const temp = await AsyncStorage.getItem("recoEvents");
-      const updatedEvents = temp ? [...JSON.parse(temp), recoEvent] : [recoEvent];
-      await AsyncStorage.setItem("recoEvents", JSON.stringify(updatedEvents));
-      alert("Created RecoEvents");
-    }
-
+    } 
+    router.back();
     router.back();
     setAddButtonDisable(false);
-    // Clear input fields after saving
-    setEventName('');
-    setEventStart(undefined);
-    setEventDate(undefined);
-    setEventEnd(undefined);
-    setEventDetail("");
-    setPriority("Low");
-    setDeadline(undefined);
-    setEventDuration(undefined);
-    router.back();
+    
   };
 
   // Handles all the Input On Change

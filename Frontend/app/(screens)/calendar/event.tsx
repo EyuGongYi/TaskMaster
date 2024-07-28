@@ -1,55 +1,77 @@
-import { View, Text, StyleSheet, Pressable } from 'react-native';
-import React, { useEffect, useState } from 'react';
-import { getCalendarEvents } from '@/scripts/googleApi';
+import { View, Text, StyleSheet, Pressable } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { deleteGoogleEvent, getCalendarEvents } from '@/scripts/googleApi';
 import { auth } from '@/firebaseConfig';
 import { useAuth } from '@/hooks/authContext';
 import { router, useLocalSearchParams } from 'expo-router';
 import { GoogleEventType } from '@/types/event';
 
-export default function Event() {
-  const [event, setEvent] = useState<GoogleEventType>();
-  const { user, eventList } = useAuth();
-  const params = useLocalSearchParams();
-  const { eventId, date } = params;
 
-  useEffect(() => {
-    if (eventId && date && eventList) {
-      const dateStr = date as string;
-      const foundEvent = eventList[dateStr]?.find(e => e.event.eventId === eventId)?.event;
-      setEvent(foundEvent);
+
+export default function event() {
+    const [eventt, setEvents] = useState<GoogleEventType>();
+    const {user, eventList} = useAuth();
+    const params = useLocalSearchParams();
+    const {eventId, date} = params;
+ 
+    async function deleteButton(eventId: string) {
+        if (await deleteGoogleEvent(user!, eventId)) {
+            router.back();
+            return;
+        } else {
+            alert("Deleting Failed");
+            return;
+        }
     }
-  }, [eventId, date, eventList]);
 
-  return (
-    <View style={styles.container}>
-      {event ? (
-        <View style={styles.eventContainer}>
-          <Text style={styles.label}>Event Name</Text>
-          <Text style={styles.value}>{event.eventName}</Text>
-          <Text style={styles.label}>Description</Text>
-          <Text style={styles.value}>{event.eventDetail}</Text>
-          <Text style={styles.label}>Date</Text>
-          <Text style={styles.value}>{event.eventStart.toLocaleDateString()}</Text>
-          <Text style={styles.label}>Start Timing</Text>
-          <Text style={styles.value}>{event.eventStart.toLocaleTimeString()}</Text>
-          <Text style={styles.label}>End Timing</Text>
-          <Text style={styles.value}>{event.eventEnd.toLocaleTimeString()}</Text>
-          <Pressable
-            style={styles.button}
-            onPress={() => router.push({
-              pathname: "/(screens)/calendar/editEvent",
-              params: {
-                eventId: event.eventId,
-                date: event.eventStart.getTime(),
-                start: event.eventStart.getTime(),
-                end: event.eventEnd.getTime(),
-                name: event.eventName,
-                details: event.eventDetail
+    useEffect(() => {
+        const datee:any  = new Date(Number(date));
+        const datte = datee.getDate().toString().length > 1 ? 
+            datee.toISOString().split("T")[0].slice(0,-2) + datee.getDate(): 
+            datee.toISOString().split("T")[0].slice(0,-2) + "0" + datee.getDate();
+        if (eventList![datte].find(e => e.event.eventId == eventId)) {
+            const eventTemp = eventList![datte].find(e => e.event.eventId == eventId)!.event;
+            setEvents(eventTemp);
+        }else {
+            router.back();
+        }
+        
+    },[eventId, date, eventList]);
+    return (
+        <View style={styles.container}>
+        {eventt ? (
+            <View style={styles.eventContainer}>
+                <Text style={styles.label}>Event Name</Text>
+                <Text style={styles.value}>{eventt.eventName}</Text>
+                <Text style={styles.label}>Description</Text>
+                <Text style={styles.value}>{eventt.eventDetail}</Text>
+                <Text style={styles.label}>Date</Text>
+                <Text style={styles.value}>{eventt.eventStart.toLocaleDateString()}</Text>
+                <Text style={styles.label}>Start Timing</Text>
+                <Text style={styles.value}>{eventt.eventStart.toLocaleTimeString()}</Text>
+                <Text style={styles.label}>End Timing</Text>
+                <Text style={styles.value}>{eventt.eventEnd.toLocaleTimeString()}</Text>
+                <Pressable
+                    style={styles.editButton}
+                    onPress={() => router.push({
+                        pathname: "/(screens)/calendar/editEvent",
+                        params: {
+                            eventId: eventt.eventId,
+                            date: eventt.eventStart.getTime(),
+                            start: eventt.eventStart.getTime(),
+                            end: eventt.eventEnd.getTime(),
+                            name: eventt.eventName,
+                            details: eventt.eventDetail
               }
             })}
           >
             <Text style={styles.buttonText}>Edit</Text>
           </Pressable>
+          <Pressable 
+          style={styles.deleteButton}
+          onPress={() => deleteButton(eventt.eventId!)}>
+            <Text style={styles.buttonText}>Delete</Text>
+        </Pressable>
         </View>
       ) : (
         <Text style={styles.noEventText}>No event found</Text>
@@ -80,12 +102,20 @@ const styles = StyleSheet.create({
     color: '#4A4A4A',
     marginBottom: 10,
   },
-  button: {
+  editButton: {
     marginTop: 20,
     alignItems: 'center',
     paddingVertical: 12,
     borderRadius: 30,
     backgroundColor: '#8575fb', // Button background color
+    width: 100,
+  },
+  deleteButton: {
+    marginTop: 20,
+    alignItems: 'center',
+    paddingVertical: 12,
+    borderRadius: 30,
+    backgroundColor: '#f15a7e', // Button background color
     width: 100,
   },
   buttonText: {

@@ -31,6 +31,7 @@ const CanvasPage: React.FC = () => {
           }
         }
       }
+      incompleteAssignments.sort((a, b) => a.dueDate - b.dueDate);
       setAssignments(incompleteAssignments);
     };
     func();

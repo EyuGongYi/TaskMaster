@@ -70,7 +70,6 @@ export default function AddEventScreen() {
       const temp = await AsyncStorage.getItem("recoEvents");
       const updatedEvents = temp ? [...JSON.parse(temp), recoEvent] : [recoEvent];
       await AsyncStorage.setItem("recoEvents", JSON.stringify(updatedEvents));
-      alert("Created RecoEvents");
     }
      
     router.back();

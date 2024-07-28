@@ -1,19 +1,10 @@
-import React, { useEffect, useState } from "react";
-import { Text, View, StyleSheet } from "react-native";
-
-import Alert from "./components/alerts";
+import React from "react";
+import { Text, View, StyleSheet, ScrollView } from "react-native";
+import Alerts from "./components/alerts";
 import TodaySchedule from "./components/todaySchedule";
-import AssignmentAlert from "@/constants/AssignmentAlert";
-import CalendarEvent from "@/constants/CalendarEvent";
 import { useAuth } from "@/hooks/authContext";
 
-// Mock data for AssignmentAlert
-const alerts: AssignmentAlert[] = [
-  { type: 'Assignment', message: 'Complete Assignment 1', deadline: '23/5/2024' },
-  { type: 'Announcement', message: 'New course material uploaded' }
-];
-
-export default  function Index() {
+export default function Index() {
   const context = useAuth();
   
   const currentDate = new Date();
@@ -26,25 +17,27 @@ export default  function Index() {
       <Text style={styles.text}>Welcome, {context.user?.displayName}!</Text>
       <Text style={styles.dateText}>{formattedDate}</Text>
       <TodaySchedule />
-      <Alert alerts = {alerts}/>
-  </View>
+      <Alerts />
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "flex-start",
     padding: 20,
+    backgroundColor: '#FAF3F3',
   },
   text: {
     fontWeight: "bold",
     fontSize: 24,
+    marginTop: 30,
   },
   dateText: {
     color: "black",
     fontSize: 18,
-    alignSelf: "center",
+    textAlign: "center",
     marginTop: 20,
+    marginBottom: 20,
   }
 });

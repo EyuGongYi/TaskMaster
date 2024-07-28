@@ -25,6 +25,7 @@ export const getEvents = async (setEventList: Function, user: User) => {
       event: event
     };
     acc[date].push(entry);
+    acc[date].sort((a, b) => a.start.getTime() - b.start.getTime());
     return acc;
   }, {} as Events);
 
@@ -46,13 +47,23 @@ export default function index() {
   return (
     <SafeAreaView style={styles.container}>
       <Agenda
-        items= {eventList}
-        renderEmptyDate= {renderEmptyDate}
-        renderItem={(item:any, isFirst:any) => (
-          <Pressable style={styles.item} onPress={() => {router.push({pathname:"/(screens)/calendar/event",
-                                                                       params:{eventId: item.event.eventId,
-                                                                          date: item.start.toISOString().split('T')[0]
-                                                                       }})}}>
+        items={eventList}
+        renderEmptyDate={renderEmptyDate}
+        theme={{
+          agendaKnobColor: '#FAF3F3',
+          backgroundColor: '#FAF3F3',
+          calendarBackground: '#FAF3F3', 
+        }}
+        renderItem={(item: any, isFirst: any) => (
+          <Pressable style={styles.item} onPress={() => {
+            router.push({
+              pathname: "/(screens)/calendar/event",
+              params: {
+                eventId: item.event.eventId,
+                date: item.start.toISOString().split('T')[0]
+              }
+            })
+          }}>
             <Text style={styles.itemText}>{item.name}</Text>
             <Text style={styles.itemText}>{item.day}</Text>
           </Pressable>
@@ -70,6 +81,7 @@ export default function index() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: '#FAF3F3'
   },
   item: {
     flex: 1,

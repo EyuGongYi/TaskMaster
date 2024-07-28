@@ -44,6 +44,8 @@ const TodaySchedule = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    width: '100%',
+    paddingHorizontal: 10,
   },
   header: {
     fontSize: 20,
@@ -51,8 +53,7 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   scrollView: {
-    flex: 1,
-    marginBottom: 350,
+    maxHeight: 300,
   },
   eventContainer: {
     backgroundColor: '#de496e',

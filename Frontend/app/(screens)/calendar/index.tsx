@@ -1,40 +1,50 @@
-import { View, Text, StyleSheet, Pressable } from 'react-native'
-import React, { useEffect } from 'react'
+import { View, Text, StyleSheet, Pressable } from 'react-native';
+import React, { useEffect } from 'react';
 import { router } from 'expo-router';
 import { Agenda, AgendaEntry } from 'react-native-calendars';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuth } from '@/hooks/authContext';
-import { Events, GoogleEventType } from '@/types/event';
+import { Events, GoogleEventType, CustomAgendaEntry } from '@/types/event';
 import { getCalendarEvents } from '@/scripts/googleApi';
 import User from '@/types/user';
 
 export const getEvents = async (setEventList: Function, user: User) => {
-  const event:any[] = await getCalendarEvents(user!);
-  const res: Events = event.reduce((acc: any, event: any) => {
-    const startDate = new Date(event.start.dateTime);
-    const date = startDate.getDate().toString().length > 1 ? 
-                  event.start.dateTime.split("T")[0].slice(0,-2) + startDate.getDate(): 
-                  event.start.dateTime.split("T")[0].slice(0,-2) + "0" +startDate.getDate();
+  const events: GoogleEventType[] = await getCalendarEvents(user);
+  
+  const res: Events = events.reduce((acc: Events, event: GoogleEventType) => {
+    const date = event.eventStart.toISOString().split('T')[0];
     if (!acc[date]) {
       acc[date] = [];
     }
-    acc[date].push({name: event.summary, height: event, day: `Deadline: ${new Date(event.end.dateTime).toLocaleDateString()}`});
+    const entry: CustomAgendaEntry = {
+      name: event.eventName,
+      height: 50, // Example height, you can adjust as needed
+      day: `${event.eventStart.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - ${event.eventEnd.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`,
+      start: event.eventStart,
+      end: event.eventEnd
+    };
+    acc[date].push(entry);
     return acc;
-  }, {} as Events) || {};
+  }, {} as Events);
+
   setEventList(res);
 }
 
 const renderEmptyDate = () => (
-  <View >
+  <View>
     <Text>No Items</Text>
   </View>
 );
 
+export default function Index() {
+  const { user, eventList, setEventList } = useAuth();
 
-export default function index() {
-  const {user, eventList, setEventList} = useAuth();
-  
-  useEffect(() => {getEvents(setEventList, user!)}, []);
+  useEffect(() => {
+    if (user) {
+      getEvents(setEventList, user);
+    }
+  }, [user]);
+
   useEffect(() => {
     console.log('Updated eventList:', eventList);
   }, [eventList]);
@@ -42,22 +52,21 @@ export default function index() {
   return (
     <SafeAreaView style={styles.container}>
       <Agenda
-        items= {eventList}
-        renderEmptyDate= {renderEmptyDate}
-        renderItem={(item:any, isFirst:any) => (
-          <Pressable style={styles.item} onPress={() => {console.log(item.height)}}>
+        items={eventList}
+        renderEmptyDate={renderEmptyDate}
+        renderItem={(item: CustomAgendaEntry, isFirst: boolean) => (
+          <Pressable style={styles.item} onPress={() => { console.log(item) }}>
             <Text style={styles.itemText}>{item.name}</Text>
             <Text style={styles.itemText}>{item.day}</Text>
           </Pressable>
         )}
       />
       <View style={styles.addEventButton}>
-        <Pressable  onPress={() => {router.push("/addEvent")}}>
+        <Pressable onPress={() => { router.push("/addEvent") }}>
           <Text style={styles.addEvent}>+</Text>
         </Pressable>
       </View>
-        
-      </SafeAreaView>
+    </SafeAreaView>
   )
 }
 
@@ -66,7 +75,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   item: {
-    flex:1,
+    flex: 1,
     backgroundColor: "skyblue",
     borderRadius: 15,
     padding: 10,

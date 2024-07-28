@@ -14,17 +14,29 @@ export type GoogleEventType = {
     eventId?: string;
     eventName: string;
     eventDetail: string;
-    eventStart?: Date;
-    eventEnd?: Date;
-    eventDate?: Date;
-    priority?: 'Low' | 'Medium' | 'High' | 'ASAP';
-    deadline?: Date;
-    eventDuration?: number
+    eventStart: Date;
+    eventEnd: Date;
 };
 
-export interface Events{
-    [date: string] : AgendaEntry[];
-  }
+export type RecoEventType = {
+    eventId?: string;
+    eventName: string;
+    eventDetail: string;
+    priority: 'Low' | 'Medium' | 'High' | 'ASAP';
+    deadline: Date;
+    eventDuration: number;
+};
+
+// Update AgendaEntry type to include start and end times
+export interface CustomAgendaEntry extends AgendaEntry {
+    start: Date;
+    end: Date;
+}
+
+// Update Events type to use CustomAgendaEntry
+export interface Events {
+    [date: string]: CustomAgendaEntry[];
+}
 
 export interface Interval {
     start: string; // ISO format

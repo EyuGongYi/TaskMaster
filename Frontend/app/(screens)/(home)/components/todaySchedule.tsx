@@ -1,21 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
-import { getEvents } from "../../calendar"; 
-import { GoogleEventType, Events } from "@/types/event"; 
+import { getEvents } from "../../calendar";
+import { GoogleEventType, Events, CustomAgendaEntry } from "@/types/event";
 import { useAuth } from '@/hooks/authContext';
-import { getCalendarEvents } from '@/scripts/googleApi';
 
 const TodaySchedule = () => {
-  const [eventList, setEventList] = useState<any>({});
-  const {user} = useAuth();
+  const [eventList, setEventList] = useState<Events>({});
+  const { user } = useAuth();
 
   useEffect(() => {
     const fetchAndSetEvents = async () => {
-       getEvents(setEventList, user!);
+      if (user) {
+        await getEvents(setEventList, user);
+      }
     };
 
     fetchAndSetEvents();
-  }, []);
+  }, [user]);
 
   const currentDate = new Date().toISOString().split('T')[0]; // ISO string of today's date
 
@@ -24,11 +25,11 @@ const TodaySchedule = () => {
       <Text style={styles.header}>Today's Schedule</Text>
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         {eventList[currentDate] && eventList[currentDate].length > 0 ? (
-          eventList[currentDate].map((event: any, index: any) => (
+          eventList[currentDate].map((event: CustomAgendaEntry, index: number) => (
             <View key={index} style={styles.eventContainer}>
               <Text style={styles.eventName}>{event.name}</Text>
               <Text style={styles.eventDetails}>
-                {new Date(event.height.start.dateTime).toLocaleTimeString()} - {new Date(event.height.end.dateTime).toLocaleTimeString()}
+                {new Date(event.start).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })} - {new Date(event.end).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               </Text>
             </View>
           ))
@@ -39,6 +40,7 @@ const TodaySchedule = () => {
     </View>
   );
 };
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,

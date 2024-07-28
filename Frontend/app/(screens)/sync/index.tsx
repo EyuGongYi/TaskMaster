@@ -26,15 +26,15 @@ export default function index() {
           <ProfileCard {...user}/>
         ))}
       </View>
-      <View style={{flex:1, flexDirection: "row"}}>
-        <View style= {{flex: 8}}>
-          <ScrollView horizontal={true}>
+      <View style={styles.footerContainer}>
+        <View style={styles.chosenListContainer}>
+          <ScrollView horizontal={true} showsHorizontalScrollIndicator={false}>
             {chosenList && chosenList.map((user: User) => (
               <ChosenProfile {...user}/>
             ))}
           </ScrollView>
         </View>
-        <View style={{flex:1}}>
+        <View style={styles.syncButtonContainer}>
           <Pressable onPress={() => router.push("/(screens)/sync/synced")}>
             <Text style={styles.submitButton}>
               Sync
@@ -55,14 +55,35 @@ const styles = StyleSheet.create({
     flexShrink: 1,
     flexBasis: 0,
     flex: 1,
+    backgroundColor: '#f0f0f0',
+  },
+  userListContainer: {
+    flex: 8,
+    marginBottom: 10,
+  },
+  footerContainer: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  chosenListContainer: {
+    flex: 8,
+  },
+  syncButtonContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   submitButton: {
     width: 60,
     height: 60,
-    borderRadius: 9999,
+    borderRadius: 30,
     marginRight: 12,
-    backgroundColor: "grey",
-    textAlign: "center",
-    textAlignVertical: "center",
+    backgroundColor: '#ef577b',
+    textAlign: 'center',
+    textAlignVertical: 'center',
+    color: 'white',
+    fontWeight: 'bold',
+    fontSize: 16,
   },
 });

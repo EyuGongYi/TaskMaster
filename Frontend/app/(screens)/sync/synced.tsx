@@ -29,93 +29,118 @@ export default function Synced() {
     };
 
     return (
-    <View style={styles.container}>
-        <Text style={styles.title}>Free Timing</Text>
-        <Text style= {styles.content}>array of Free Timing</Text>
-        <Pressable onPress={() => router.back()}>
-            <Text style={styles.backButton}>
-                Back
-            </Text>
-        </Pressable>
-        <Text style= {styles.content}>{startDate.toLocaleDateString()}</Text>
-        <Pressable style={styles.button} onPress={() => setShowStartDatePicker(true)}>
-          <Text style={styles.buttonText}>Select Start Date</Text>
-        </Pressable>
-        {showStartDatePicker && (
+        <View style={styles.container}>
+          <Text style={styles.title}>Free Timing</Text>
+          <Text style={styles.content}>List of Free Timings</Text>
+          <Pressable onPress={() => router.back()}>
+            <Text style={styles.backButton}>Back</Text>
+          </Pressable>
+          <Text style={styles.content}>{startDate.toLocaleDateString()}</Text>
+          <Pressable style={styles.button} onPress={() => setShowStartDatePicker(true)}>
+            <Text style={styles.buttonText}>Select Start Date</Text>
+          </Pressable>
+          {showStartDatePicker && (
             <DateTimePicker
-            value={startDate ? new Date(startDate) : new Date()}
-            mode="date"
-            display="default"
-            onChange={onChangeStartDate}
+              value={startDate ? new Date(startDate) : new Date()}
+              mode="date"
+              display="default"
+              onChange={onChangeStartDate}
             />
-        )}
-        <Text style= {styles.content}>{endDate.toLocaleDateString()}</Text>
-        <Pressable style={styles.button} onPress={() => setShowEndDatePicker(true)}>
-          <Text style={styles.buttonText}>Select End Date</Text>
-        </Pressable>
-        {showEndDatePicker && (
+          )}
+          <Text style={styles.content}>{endDate.toLocaleDateString()}</Text>
+          <Pressable style={styles.button} onPress={() => setShowEndDatePicker(true)}>
+            <Text style={styles.buttonText}>Select End Date</Text>
+          </Pressable>
+          {showEndDatePicker && (
             <DateTimePicker
-            value={endDate ? new Date(endDate) : new Date()}
-            mode="date"
-            display="default"
-            onChange={onChangeEndDate}
+              value={endDate ? new Date(endDate) : new Date()}
+              mode="date"
+              display="default"
+              onChange={onChangeEndDate}
             />
-        )}
-        <Pressable onPress={async() => setFreeTime( await getFreeTime(chosenList, startDate.toISOString(), endDate.toISOString()))}>
-            <Text style={styles.backButton}>
-                FreeTime
-            </Text>
-        </Pressable>
-        {freeTime && freeTime.map(interval => (
-            <View>
-                <Text>Free Interval</Text>
-                <Text>{new Date(interval.start).toLocaleDateString()} {new Date(interval.start).toLocaleTimeString()}</Text>
-                <Text>{new Date(interval.end).toLocaleDateString()} {new Date(interval.end).toLocaleTimeString()}</Text>
-            </View>
+          )}
+          <Pressable
+            style={styles.button}
+            onPress={async () => setFreeTime(await getFreeTime(chosenList, startDate.toISOString(), endDate.toISOString()))}
+          >
+            <Text style={styles.buttonText}>Find Free Time</Text>
+          </Pressable>
+          {freeTime &&
+            freeTime.map((interval, index) => (
+              <View key={index} style={styles.intervalContainer}>
+                <Text style={styles.intervalText}>Free Interval</Text>
+                <Text style={styles.intervalText}>
+                  {new Date(interval.start).toLocaleDateString()} {new Date(interval.start).toLocaleTimeString()}
+                </Text>
+                <Text style={styles.intervalText}>
+                  {new Date(interval.end).toLocaleDateString()} {new Date(interval.end).toLocaleTimeString()}
+                </Text>
+              </View>
             ))}
-    </View>
-  )
-}
-const styles = StyleSheet.create({
-    container: {
+        </View>
+      );
+    }
+    
+    const styles = StyleSheet.create({
+      container: {
         flex: 1,
         paddingVertical: 30,
-        paddingHorizontal: 0,
-        
-    },
-    backButton: {
-        width: 60,
+        paddingHorizontal: 20,
+        backgroundColor: '#f0f0f0',
+      },
+      title: {
+        alignSelf: 'center',
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#405d78',
+        marginBottom: 10,
+      },
+      content: {
+        alignSelf: 'center',
+        fontSize: 16,
+        color: '#3a2f34',
+      },
+      backButton: {
+        width: 80,
         height: 45,
         borderRadius: 25,
-        marginRight: 12,
-        backgroundColor: "grey",
-        textAlign: "center",
-        textAlignVertical: "center",
-    },
-    title: {
-        alignSelf: "center",
-    },
-    content: {
-        alignSelf: "center",
-    },
-    button: {
-        margin: 5,
+        backgroundColor: '#8576fb',
+        textAlign: 'center',
+        textAlignVertical: 'center',
+        color: 'white',
+        fontWeight: 'bold',
+        fontSize: 16,
+        marginTop: 10,
+        alignSelf: 'center',
+      },
+      button: {
+        marginVertical: 10,
         alignItems: 'center',
-        alignSelf: "center",
+        alignSelf: 'center',
         paddingVertical: 12,
         borderRadius: 30,
         elevation: 3,
-        backgroundColor: 'grey',
-        borderColor: "black",
+        backgroundColor: '#e4b45f',
+        borderColor: '#3a2f34',
         width: 200,
       },
       buttonText: {
-        textAlign: "center",
-        fontWeight: "bold",
-        color: "white",
-        fontSize: 15,
-        textShadowColor: "black",
-        textShadowOffset:{width: -4, height: 2},
-        textShadowRadius: 10
+        textAlign: 'center',
+        fontWeight: 'bold',
+        color: 'white',
+        fontSize: 16,
+        textShadowColor: 'black',
+        textShadowOffset: { width: -1, height: 1 },
+        textShadowRadius: 10,
       },
-});
+      intervalContainer: {
+        backgroundColor: '#958e96',
+        padding: 10,
+        borderRadius: 10,
+        marginVertical: 5,
+      },
+      intervalText: {
+        color: 'white',
+        fontSize: 14,
+      },
+    });

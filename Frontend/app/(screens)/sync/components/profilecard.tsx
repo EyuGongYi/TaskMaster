@@ -1,5 +1,3 @@
-
-
 import { GoogleSignin } from '@react-native-google-signin/google-signin';
 import React from 'react';
 import { StyleSheet, View, Image, Text, Pressable } from 'react-native';
@@ -37,7 +35,6 @@ export default function ProfileCard(user: User, key : React.Key) {
 }
 
 const styles = StyleSheet.create({
-  /** Profile */
   profile: {
     padding: 12,
     backgroundColor: '#fff',
@@ -56,7 +53,6 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
     color: '#292929',
-
   },
   profileHandle: {
     marginTop: 2,
@@ -65,4 +61,3 @@ const styles = StyleSheet.create({
     color: '#858585',
   },
 });
-
